@@ -1,0 +1,61 @@
+# ============================================================
+# ScamShield — .gitignore
+# ============================================================
+
+# --- Credentials and secrets (NEVER commit) -----------------
+.env
+*.key
+*.pem
+*.p12
+*.pfx
+secrets/
+credentials/
+
+# --- Local PHP configuration --------------------------------
+php.ini.local
+
+# --- Uploaded evidence (private, must stay off Git) ---------
+storage/evidence/
+uploads/
+
+# --- Runtime logs -------------------------------------------
+storage/logs/
+logs/
+*.log
+
+# --- PHP runtime and build artifacts ------------------------
+vendor/
+composer.lock
+*.cache
+*.tmp
+*.swp
+
+# --- IDE and editor files -----------------------------------
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+nbproject/
+.phpstorm.meta.php
+_ide_helper.php
+
+# --- OS generated files -------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# --- Test output and coverage -------------------------------
+.phpunit.result.cache
+coverage/
+.coverage/
+build/
+dist/
+
+# ============================================================
+# DO NOT add .env.example — it must remain trackable
+# ============================================================
