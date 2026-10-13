@@ -1,0 +1,1030 @@
+/**
+ * ScamShield — Component Styles
+ *
+ * Buttons, badges, cards, inputs, URL inspector, risk meter, findings, table.
+ * Follows Stitch DESIGN.md: no drop shadows, no gradients, hairline borders,
+ * 2px/4px radii only, monospace for telemetry.
+ */
+
+/* ════════════════════════════════════════════════════════════════════════════
+   1. BUTTONS
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  font-family: var(--font-mono);
+  font-size: var(--text-code-md);
+  line-height: var(--lh-code-md);
+  font-weight: 600;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: background-color 0.1s ease, color 0.1s ease;
+  border-radius: var(--radius-micro);
+}
+
+.btn:active {
+  translate: 0 1px;
+}
+
+/* Primary — Safety Orange, mandatory for the main CTA */
+.btn-primary {
+  background-color: var(--primary-container);   /* #FF742D */
+  color: var(--on-primary);
+  border: 1px solid var(--color-charcoal);
+  padding: 0.75rem 1.5rem;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary);             /* darken on hover */
+}
+
+.btn-primary:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* Secondary — white bg, charcoal border */
+.btn-secondary {
+  background-color: var(--color-canvas);
+  color: var(--color-charcoal);
+  border: 1px solid var(--color-charcoal);
+  padding: 0.625rem 1.25rem;
+}
+
+.btn-secondary:hover {
+  background-color: var(--surface-container-low);
+}
+
+/* Tertiary — inline link style, monospace bracket suffix */
+.btn-tertiary {
+  background: none;
+  color: var(--on-secondary-container);
+  border: none;
+  padding: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-code-sm);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* Inverse — charcoal bg, light text (dark panels) */
+.btn-inverse {
+  background-color: var(--inverse-surface);
+  color: var(--inverse-on-surface);
+  border: 1px solid var(--inverse-surface);
+  padding: 0.625rem 1.25rem;
+}
+
+.btn-inverse:hover {
+  background-color: var(--color-charcoal);
+}
+
+/* Small variant */
+.btn-sm {
+  padding: 0.375rem 0.75rem;
+  font-size: var(--text-code-sm);
+}
+
+/* Full-width */
+.btn-block {
+  width: 100%;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   2. BADGES / CHIPS
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: var(--text-code-sm);
+  line-height: var(--lh-code-sm);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--radius-micro);
+  white-space: nowrap;
+}
+
+/* Verified — blue */
+.badge-verified {
+  background-color: var(--color-blue-tint-8);
+  color: var(--color-blue);
+  border: 1px solid var(--color-blue);
+}
+
+/* Flagged / alert — orange */
+.badge-alert {
+  background-color: var(--color-orange-tint-10);
+  color: var(--color-orange);
+  border: 1px solid var(--color-orange);
+}
+
+/* Danger / error */
+.badge-danger {
+  background-color: var(--error-container);
+  color: var(--on-error-container);
+  border: 1px solid var(--error);
+}
+
+/* Neutral / unconfirmed */
+.badge-neutral {
+  background-color: var(--color-charcoal-tint-6);
+  color: var(--color-charcoal);
+  border: 1px solid var(--color-charcoal-tint-10);
+}
+
+/* Critical — solid orange, white text */
+.badge-critical {
+  background-color: var(--primary-container);
+  color: var(--on-primary);
+  border: 1px solid var(--primary);
+}
+
+/* Severity labels in findings */
+.badge-severity-high   { @extend .badge-alert; }
+.badge-severity-medium { @extend .badge-neutral; }
+.badge-severity-low    {
+  background-color: var(--surface-container);
+  color: var(--on-surface-variant);
+  border: 1px solid var(--color-charcoal-tint-15);
+  font-family: var(--font-mono);
+  font-size: var(--text-code-sm);
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--radius-micro);
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   3. CARDS / PANELS
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.card {
+  background-color: var(--color-canvas);
+  border: var(--border-hairline);
+  border-radius: var(--radius-none);
+  /* No box-shadow — flat architectural depth only */
+}
+
+.card-header {
+  padding: var(--space-sm) var(--space-md);
+  background-color: var(--surface-container-low);
+  border-bottom: var(--border-hairline);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+
+.card-body {
+  padding: var(--space-md) var(--space-lg);
+}
+
+/* Accent top border variants (3px) */
+.card--accent-neutral { border-top: 3px solid var(--color-charcoal); }
+.card--accent-alert   { border-top: 3px solid var(--color-orange); }
+.card--accent-verified{ border-top: 3px solid var(--color-blue); }
+.card--accent-error   { border-top: 3px solid var(--error); }
+
+/* Forensic panel — charcoal bg (dark) */
+.card-dark {
+  background-color: var(--inverse-surface);
+  color: var(--inverse-on-surface);
+  border: 2px solid var(--inverse-surface);
+}
+
+.card-dark .card-header {
+  background-color: var(--inverse-surface);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   4. FORM INPUTS
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.form-label {
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  font-weight: 600;
+  color: var(--on-surface);
+}
+
+.form-input,
+.form-textarea {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  background-color: var(--surface-container-low);
+  color: var(--on-surface);
+  border: 1px solid rgba(55, 55, 55, 0.20); /* charcoal 20% */
+  border-radius: var(--radius-panel);
+  font-family: var(--font-mono);
+  font-size: var(--text-code-md);
+  line-height: var(--lh-code-md);
+  transition: border-color 0.1s ease, box-shadow 0.1s ease;
+  resize: vertical;
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: rgba(89, 66, 56, 0.50); /* on-surface-variant 50% */
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--color-blue);
+  box-shadow: 0 0 0 var(--focus-ring-offset) white,
+              0 0 0 calc(var(--focus-ring-offset) + 2px) var(--color-blue);
+}
+
+/* Char counter below textarea */
+.form-counter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-xs) var(--space-md);
+  background-color: var(--surface-container-low);
+  border-top: var(--border-hairline);
+  font-family: var(--font-mono);
+  font-size: var(--text-code-sm);
+  color: var(--on-surface-variant);
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   5. TABS (inspector input switcher)
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.tabs {
+  display: flex;
+  border-bottom: var(--border-hairline);
+  background-color: var(--surface-container-low);
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 0.75rem var(--space-md);
+  font-family: var(--font-mono);
+  font-size: var(--text-code-md);
+  font-weight: 500;
+  color: var(--on-surface-variant);
+  background: none;
+  border: none;
+  border-right: var(--border-hairline);
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.1s ease, color 0.1s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tab-btn:last-child {
+  border-right: none;
+}
+
+.tab-btn:hover {
+  background-color: var(--surface-container);
+  color: var(--on-surface);
+}
+
+.tab-btn[aria-selected="true"],
+.tab-btn.is-active {
+  background-color: var(--color-canvas);
+  color: var(--on-surface);
+  font-weight: 600;
+}
+
+.tab-label-active {
+  font-size: 10px;
+  background-color: var(--secondary-fixed);
+  color: var(--on-secondary-container);
+  padding: 0.125rem 0.375rem;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   6. INSPECTOR PANEL (tabbed input box)
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.inspector-panel {
+  background-color: var(--color-canvas);
+  border: 2px solid var(--inverse-surface);
+}
+
+.inspector-panel .tabs {
+  border-bottom: var(--border-hairline);
+}
+
+/* Sample preset buttons */
+.preset-btn {
+  padding: 0.25rem 0.5rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-code-sm);
+  background-color: var(--surface-container);
+  color: var(--on-surface);
+  border: 1px solid var(--surface-container-highest);
+  cursor: pointer;
+  transition: background-color 0.1s ease;
+}
+
+.preset-btn:hover {
+  background-color: var(--surface-container-high);
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   7. ANNOTATED URL INSPECTOR
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.url-anatomy {
+  background-color: var(--color-charcoal-tint-6);
+  border: var(--border-hairline);
+  padding: var(--space-md);
+  overflow-x: auto;
+}
+
+.url-tokens {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-sm);
+  font-family: var(--font-mono);
+  font-size: var(--text-code-lg);
+}
+
+.url-token {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.url-token__value {
+  padding: 0.125rem 0.5rem;
+  font-weight: 600;
+}
+
+.url-token__label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Token color variants */
+.url-token--safe .url-token__value {
+  background-color: var(--color-blue-tint-8);
+  color: var(--color-blue);
+  border: 1px solid var(--color-blue);
+}
+.url-token--safe .url-token__label { color: var(--color-blue); }
+
+.url-token--warning .url-token__value {
+  background-color: var(--primary-fixed);
+  color: var(--on-primary-fixed);
+  border: 1px solid var(--primary);
+}
+.url-token--warning .url-token__label { color: var(--primary); }
+
+.url-token--danger .url-token__value {
+  background-color: var(--error-container);
+  color: var(--on-error-container);
+  border: 1px solid var(--error);
+}
+.url-token--danger .url-token__label { color: var(--error); }
+
+.url-token--neutral .url-token__value {
+  background-color: var(--surface-container-high);
+  color: var(--on-surface);
+  border: var(--border-hairline);
+}
+.url-token--neutral .url-token__label { color: var(--on-surface-variant); }
+
+/* ════════════════════════════════════════════════════════════════════════════
+   8. RISK METER
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.risk-meter {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-xs);
+}
+
+.risk-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: var(--space-sm) var(--space-xs);
+  background-color: var(--surface-container-low);
+  color: var(--on-surface-variant);
+  font-family: var(--font-mono);
+  font-size: var(--text-code-sm);
+  text-align: center;
+}
+
+.risk-step__icon {
+  font-size: 1.1rem;
+  line-height: 1;
+  /* shape conveys risk level — NOT color alone (accessibility) */
+}
+
+.risk-step__label {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.risk-step__range {
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+/* Active tier */
+.risk-step--active {
+  background-color: var(--primary-container);
+  color: var(--on-primary);
+  position: relative;
+}
+
+/* Caret pointer below active step */
+.risk-step--active::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  translate: -50% 0;
+  width: 0;
+  height: 0;
+  border-left:  5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top:   5px solid var(--primary-container);
+}
+
+/* Critical tier (score 85-100) */
+.risk-step--critical-active {
+  background-color: var(--error);
+  color: var(--on-error);
+}
+
+.risk-step--critical-active::after {
+  border-top-color: var(--error);
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   9. VERDICT BANNER
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.verdict-banner {
+  border: var(--border-hairline);
+  background-color: var(--color-canvas);
+}
+
+.verdict-banner--high {
+  border-top: 4px solid var(--primary-container);
+}
+
+.verdict-banner--critical {
+  border-top: 4px solid var(--error);
+  background-color: var(--error-container);
+}
+
+.verdict-banner--medium {
+  border-top: 4px solid var(--secondary);
+}
+
+.verdict-banner--low {
+  border-top: 4px solid var(--tertiary);
+}
+
+.verdict-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: var(--space-lg) var(--space-lg) var(--space-md);
+  border-bottom: var(--border-hairline);
+}
+
+.verdict-score {
+  font-family: var(--font-headline);
+  font-size: var(--text-headline-md);
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.verdict-body {
+  padding: var(--space-md) var(--space-lg);
+  font-size: var(--text-body-md);
+  line-height: var(--lh-body-md);
+  color: var(--on-surface);
+}
+
+.verdict-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-lg);
+  border-top: var(--border-hairline);
+  background-color: var(--surface-container-low);
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   10. FINDINGS LIST
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.findings-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.finding-item {
+  background-color: var(--surface-container-low);
+  border: var(--border-hairline);
+  padding: var(--space-md);
+}
+
+.finding-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.finding-title {
+  font-family: var(--font-headline);
+  font-size: var(--text-headline-sm);
+  font-weight: 600;
+  color: var(--on-surface);
+}
+
+.finding-body {
+  font-size: var(--text-body-md);
+  line-height: var(--lh-body-md);
+  color: var(--on-surface-variant);
+}
+
+.finding-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  margin-top: var(--space-sm);
+  font-family: var(--font-mono);
+  font-size: var(--text-code-sm);
+  color: var(--on-surface-variant);
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   11. AUDIT LOG TABLE (rule trigger table)
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.audit-log {
+  background-color: var(--surface-container-low);
+  border: var(--border-hairline);
+  padding: var(--space-md);
+  font-family: var(--font-mono);
+  font-size: var(--text-code-sm);
+  overflow-x: auto;
+}
+
+.audit-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: var(--space-xs) 0;
+}
+
+.audit-row + .audit-row {
+  border-top: 1px solid var(--color-charcoal-tint-10);
+}
+
+.audit-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--space-sm);
+  margin-top: var(--space-sm);
+  border-top: var(--border-hairline);
+  font-weight: 700;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   12. DATA TABLE (scam registry / pattern ledger)
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: var(--border-hairline);
+}
+
+.data-table thead tr {
+  background-color: var(--surface-container-low);
+}
+
+.data-table th {
+  padding: 0.75rem var(--space-md);
+  font-family: var(--font-mono);
+  font-size: var(--text-code-sm);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--on-surface);
+  text-align: left;
+  border-bottom: var(--border-hairline);
+}
+
+.data-table td {
+  padding: var(--space-md);
+  font-size: var(--text-body-sm);
+  vertical-align: top;
+  border-bottom: var(--border-hairline);
+  color: var(--on-surface);
+}
+
+.data-table tbody tr:hover {
+  background-color: var(--surface-container-low);
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   13. TRIAGE / NEXT-STEPS PANEL
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.triage-panel {
+  background-color: var(--color-canvas);
+  border: 2px solid var(--inverse-surface);
+  padding: var(--space-lg);
+}
+
+.triage-steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+
+.triage-step {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-sm);
+  background-color: var(--surface-container-low);
+}
+
+.triage-step label {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  cursor: pointer;
+  width: 100%;
+  font-size: var(--text-body-sm);
+  color: var(--on-surface);
+  font-weight: 500;
+}
+
+.triage-step label:hover {
+  background-color: var(--surface-container);
+}
+
+.triage-step input[type="checkbox"] {
+  margin-top: 2px;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary-container);
+  border-radius: 0; /* square — consistent with crisp design lang */
+  cursor: pointer;
+}
+
+.step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background-color: var(--inverse-surface);
+  color: var(--inverse-on-surface);
+  font-family: var(--font-mono);
+  font-size: var(--text-code-sm);
+  font-weight: 700;
+  flex-shrink: 0;
+  border-radius: var(--radius-micro);
+}
+
+/* Helplines in aside */
+.helpline-box {
+  background-color: var(--surface-container-low);
+  border: var(--border-hairline);
+  padding: var(--space-sm) var(--space-md);
+}
+
+.helpline-number {
+  font-family: var(--font-headline);
+  font-size: var(--text-headline-sm);
+  font-weight: 700;
+  color: var(--on-surface);
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   14. LIMITATIONS / AIRGAP BOX
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.limitations-box {
+  background-color: var(--surface-container-low);
+  border: var(--border-hairline);
+  padding: var(--space-md) var(--space-lg);
+  font-size: var(--text-body-sm);
+  color: var(--on-surface-variant);
+  line-height: var(--lh-body-lg);
+}
+
+.airgap-proof {
+  margin-top: var(--space-sm);
+  background-color: var(--color-canvas);
+  border: var(--border-hairline);
+  padding: var(--space-xs) var(--space-sm);
+  font-family: var(--font-mono);
+  font-size: var(--text-code-sm);
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   15. INLINE INFO STRIP (transparency disclaimer below verdict)
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.info-strip {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-md);
+  background-color: var(--surface-container-low);
+  border: var(--border-hairline);
+  font-family: var(--font-mono);
+  font-size: var(--text-code-sm);
+  color: var(--on-surface-variant);
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   16. EMERGENCY STRIP STEPS (home page 4-step sequence)
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.emergency-steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-sm);
+}
+
+@media (max-width: 899px) {
+  .emergency-steps {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 540px) {
+  .emergency-steps {
+    grid-template-columns: 1fr;
+  }
+}
+
+.emergency-step {
+  background-color: var(--color-canvas);
+  border: var(--border-hairline);
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Highlighted step (step 02 — Dial 1930) */
+.emergency-step--highlight {
+  border: 2px solid var(--primary-container);
+}
+
+.step-num {
+  font-family: var(--font-headline);
+  font-size: var(--text-headline-xl);
+  font-weight: 700;
+  color: rgba(27, 28, 28, 0.15);
+  line-height: 1;
+  margin-bottom: var(--space-sm);
+}
+
+.emergency-step--highlight .step-num {
+  color: var(--primary-container);
+}
+
+.step-footer {
+  margin-top: var(--space-md);
+  padding-top: var(--space-sm);
+  border-top: var(--border-hairline);
+  font-family: var(--font-mono);
+  font-size: var(--text-code-sm);
+  font-weight: 600;
+  color: var(--on-surface);
+}
+
+.emergency-step--highlight .step-footer {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   17. CAPABILITY SPLIT SECTION (home page — can/cannot)
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.capability-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+
+@media (max-width: 899px) {
+  .capability-split {
+    grid-template-columns: 1fr;
+  }
+}
+
+.capability-col {
+  padding: var(--space-xl) 0;
+}
+
+.capability-col:first-child {
+  padding-right: var(--space-xl);
+  border-right: var(--border-hairline);
+}
+
+.capability-col:last-child {
+  padding-left: var(--space-xl);
+}
+
+@media (max-width: 899px) {
+  .capability-col:first-child {
+    padding-right: 0;
+    border-right: none;
+    border-bottom: var(--border-hairline);
+    padding-bottom: var(--space-xl);
+  }
+  .capability-col:last-child {
+    padding-left: 0;
+    padding-top: var(--space-xl);
+  }
+}
+
+.capability-item {
+  padding-left: var(--space-md);
+  border-left: 2px solid var(--on-secondary-container);
+  margin-bottom: var(--space-lg);
+}
+
+.capability-item--warning {
+  border-left-color: var(--primary-container);
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   18. DARK STATEMENT BAND (RBI mandate strip)
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.statement-band {
+  background-color: var(--inverse-surface);
+  color: var(--inverse-on-surface);
+  border-top: 2px solid var(--primary-container);
+  border-bottom: 2px solid var(--primary-container);
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   19. REGISTRY DIRECTORY STRIP (institutional links)
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.registry-link {
+  display: inline-flex;
+  padding: 0.5rem 0.875rem;
+  background-color: var(--color-canvas);
+  border: 1px solid var(--inverse-surface);
+  font-family: var(--font-mono);
+  font-size: var(--text-code-sm);
+  color: var(--on-surface);
+  text-decoration: none;
+  transition: background-color 0.1s ease;
+}
+
+.registry-link:hover {
+  background-color: var(--surface-container-high);
+  color: var(--on-surface);
+  text-decoration: none;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   20. REPORT OUTPUT BOX (pre-formatted complaint text)
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.report-output {
+  background-color: var(--surface-container-low);
+  border: var(--border-hairline);
+  padding: var(--space-md);
+  margin-top: var(--space-md);
+}
+
+.report-output pre {
+  font-family: var(--font-mono);
+  font-size: var(--text-code-sm);
+  color: var(--on-surface-variant);
+  white-space: pre-wrap;
+  line-height: 1.5;
+  user-select: all;
+  margin: 0;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   21. OFFICIAL CHANNELS TABLE (aside)
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.channels-table {
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: var(--text-code-sm);
+}
+
+.channels-table td {
+  padding: 0.375rem 0;
+  border-bottom: var(--border-hairline);
+}
+
+.channels-table td:last-child {
+  text-align: right;
+  font-weight: 600;
+  color: var(--on-surface);
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   22. BREADCRUMB META
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.breadcrumb-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding-bottom: var(--space-md);
+  border-bottom: var(--border-hairline);
+  font-family: var(--font-mono);
+  font-size: var(--text-code-sm);
+  color: var(--on-surface-variant);
+}
+
+.dot-marker {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background-color: var(--on-secondary-container);
+}
+
+.dot-marker--orange {
+  background-color: var(--primary-container);
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   23. PRINT / EXPORT placeholder (shown only to screen readers & JS)
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.js-only {
+  display: none;
+}
+
+.js-enabled .js-only {
+  display: inline-flex;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   24. EMPTY / ERROR STATES
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.empty-state {
+  padding: var(--space-xl);
+  text-align: center;
+  background-color: var(--surface-container-low);
+  border: var(--border-hairline);
+  font-size: var(--text-body-md);
+  color: var(--on-surface-variant);
+}
+
+.error-state {
+  padding: var(--space-md);
+  background-color: var(--error-container);
+  border: 1px solid var(--error);
+  font-size: var(--text-body-md);
+  color: var(--on-error-container);
+}

@@ -1,0 +1,8 @@
+-- ScamShield — database schema
+-- Status: stub — tables will be added in Milestone 2 (authentication) and onwards.
+-- Run php database/setup.php first to create the database and optional app user.
+--
+-- Planned entities (from Docs/ARCHITECTURE.md §5):
+--   users, analyses, incidents, evidence_files, incident_status_history, audit_logs
+--
+-- Do not add tables here until the relevant milestone is implemented and reviewed.

@@ -1,25 +1,25 @@
 # ScamShield — Task Board
 
-- **Status:** Initial plan, v0.1
+- **Status:** Updated after Phase 1 implementation, v0.2
 - **Last reviewed:** 2026-10-12
 
 Legend: `[ ]` not started, `[x]` complete and verified, `[!]` blocked or requires a decision. Do not mark a task complete without evidence.
 
 ## Milestone 0 — Repository and environment
-- [ ] Inspect repository and record current `git status`.
-- [ ] Confirm XAMPP Apache and MySQL start successfully.
-- [ ] Record PHP and MySQL/MariaDB versions.
-- [ ] Confirm repository root and `Docs/` path.
-- [ ] Add/review `.gitignore` for secrets, uploads, logs, caches and local configuration.
-- [ ] Create README with verified setup instructions only.
-- [ ] Decide whether Apache will serve `public/` as document root or use a reviewed temporary local arrangement.
+- [x] Inspect repository and record current `git status`. *(git status: clean on main; Docs/ untracked)*
+- [x] Confirm XAMPP Apache and MySQL start successfully. *(both running as processes)*
+- [x] Record PHP and MySQL/MariaDB versions. *(PHP 8.2.12, MariaDB 10.4.32, Apache 2.4.58)*
+- [x] Confirm repository root and `Docs/` path. *(`C:\xampp\htdocs\AntiScam\`, `Docs/` present)*
+- [x] Add/review `.gitignore` for secrets, uploads, logs, caches and local configuration. *(`.gitignore` created and verified)*
+- [x] Create README with verified setup instructions only. *(README.md updated; unverified steps labelled)*
+- [x] Decide whether Apache will serve `public/` as document root or use a reviewed temporary local arrangement. *(Option A: virtual host — see ADR-009)*
 
 ## Milestone 1 — Application skeleton
-- [ ] Create directory structure from `ARCHITECTURE.md`.
-- [ ] Add front controller/router and basic error handling.
-- [ ] Add configuration loader; never commit real secrets.
-- [ ] Verify local home page and a not-found route.
-- [ ] Add initial smoke test/checklist.
+- [x] Create directory structure from `ARCHITECTURE.md`. *(all dirs created with .gitkeep files)*
+- [x] Add front controller/router and basic error handling. *(`public/index.php`, `app/Support/Router.php`, `app/Support/ErrorHandler.php` — HTTP 404 verified)*
+- [x] Add configuration loader; never commit real secrets. *(`config/env.php`, `config/app.php`, `config/database.php` — `.env` gitignored)*
+- [x] Verify local home page and a not-found route. *(HTTP 200 home page verified; HTTP 404 for unknown routes verified)*
+- [x] Add initial smoke test/checklist. *(`/health` endpoint returns JSON `{"status":"ok"}` with all checks passing; DB SELECT 1 verified)*
 
 ## Milestone 2 — Database
 - [ ] Finalize schema for users, analyses, incidents, evidence metadata, status history and audit logs.
@@ -90,8 +90,11 @@ Legend: `[ ]` not started, `[x]` complete and verified, `[!]` blocked or require
 - [!] Evidence file allowlist and size limits.
 - [!] Retention/deletion policy.
 - [!] Threat-intelligence provider and terms.
-- [!] Apache document-root approach.
-- [!] Exact installed PHP/MySQL versions.
+- [x] Apache document-root approach. *(resolved: Option A — ADR-009 in DECISION.md)*
+- [x] Exact installed PHP/MySQL versions. *(resolved: PHP 8.2.12, MariaDB 10.4.32)*
+
+## Pending manual step
+- [ ] Add `127.0.0.1   scamshield.local` to `C:\Windows\System32\drivers\etc\hosts` with Administrator elevation so the site resolves in a browser at `http://scamshield.local/`.
 
 ## Current next action
-Inspect the existing repository and environment without modifying or deleting files. Then report findings and resolve the blockers before implementation.
+Milestone 2 — finalize and implement the database schema (users, analyses, incidents, evidence_files, incident_status_history, audit_logs). Resolve open decisions (anonymous analysis, evidence policy, retention) before designing the schema.

@@ -1,0 +1,21 @@
+# ScamShield — public/.htaccess
+# Routes all requests through index.php (front controller pattern).
+# Requires mod_rewrite (enabled by default in XAMPP).
+
+Options -Indexes
+
+# Block direct access to sensitive files
+<FilesMatch "^\.env|^\.git">
+    Require all denied
+</FilesMatch>
+
+# Enable URL rewriting
+RewriteEngine On
+
+# If the request is for an existing file or directory, serve it directly.
+# (Handles public/assets/ etc.)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Otherwise route through the front controller.
+RewriteRule ^ index.php [QSA,L]

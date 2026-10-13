@@ -76,3 +76,21 @@ Record decisions that materially affect architecture, security, product scope, o
 - **Decision:** Keep the threat-intelligence adapter provider-neutral until current terms, permitted use, update frequency, rate limits, and privacy implications are verified for the intended use.
 - **Sources:** https://openphish.com/phishing_feeds.html ; https://www.openphish.com/terms.html
 - **Next action:** Review the current terms and, if necessary, select a source whose license explicitly permits the intended academic/demo use.
+
+## ADR-009 — Document-root strategy: Option A (virtual host serving public/)
+
+- **Status:** Accepted
+- **Date:** 2026-10-12
+- **Context:** XAMPP's default setup serves `C:\xampp\htdocs` at `localhost`, which would expose the entire `AntiScam\` repository tree (including `app/`, `config/`, `storage/`, `.env`) if accessed via `localhost/AntiScam/`. `Docs/ARCHITECTURE.md` recommends configuring Apache to serve only `AntiScam/public/` as the document root.
+- **Decision:** Add two virtual host blocks to `C:\xampp\apache\conf\extra\httpd-vhosts.conf`:
+  1. A `localhost *:80` catch-all that serves `C:/xampp/htdocs` with `Options -Indexes`, preventing directory listing.
+  2. A `scamshield.local *:80` vhost whose `DocumentRoot` is `C:/xampp/htdocs/AntiScam/public` with `AllowOverride All` (for `.htaccess` rewrite support) and `Options -Indexes`.
+  Add `127.0.0.1 scamshield.local` to the Windows hosts file.
+  All application code, configuration, and storage remain in `app/`, `config/`, `database/`, and `storage/` — none of which are under `public/`.
+- **Consequences:**
+  - `http://scamshield.local/` serves only `public/index.php` and `public/assets/`.
+  - `app/`, `config/`, `database/`, `storage/`, `.env`, and `Docs/` are unreachable over HTTP.
+  - Apache must be restarted after the vhost config change.
+  - The Windows hosts entry requires Administrator elevation and must be added manually or via an elevated shell.
+  - `public/.htaccess` routes all non-file/non-directory requests through `public/index.php`.
+- **Revisit when:** The project moves to a hosted server; at that point the server's own virtual host or config replaces this local arrangement.

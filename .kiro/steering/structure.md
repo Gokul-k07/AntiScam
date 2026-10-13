@@ -4,7 +4,7 @@ inclusion: auto
 
 # ScamShield — Directory Structure and Naming Conventions
 
-## Verified existing structure (as of 2026-10-12)
+## Verified existing structure (as of 2026-10-12, after Phase 1)
 ```
 AntiScam/
 ├── Docs/              ← canonical project documents (DO NOT move or rename)
@@ -18,24 +18,10 @@ AntiScam/
 ├── .kiro/             ← Kiro workspace configuration
 │   ├── steering/
 │   └── specs/
-├── .gitignore
-├── .env.example
-└── README.md
-```
-
-## Planned application structure (not yet created)
-The following is the intended structure from ARCHITECTURE.md. Nothing below has been created yet.
-
-```
-AntiScam/
-├── public/            ← Web document root / front controller (PENDING: virtual host decision)
-│   ├── index.php
-│   └── assets/
-│       ├── css/
-│       ├── js/
-│       └── images/
 ├── app/
 │   ├── Controllers/
+│   │   ├── HomeController.php
+│   │   └── HealthController.php
 │   ├── Middleware/
 │   ├── Services/
 │   │   ├── Analysis/
@@ -44,21 +30,47 @@ AntiScam/
 │   ├── Repositories/
 │   ├── Validators/
 │   ├── Views/
+│   │   ├── layouts/main.php
+│   │   ├── pages/home.php
+│   │   ├── pages/not-found.php
+│   │   ├── pages/error.php
+│   │   └── partials/health-status.php
 │   └── Support/
+│       ├── Autoloader.php
+│       ├── Bootstrap.php
+│       ├── Database.php
+│       ├── ErrorHandler.php
+│       ├── Logger.php
+│       └── Router.php
 ├── config/
-│   ├── app.php
-│   └── database.php
+│   ├── env.php        ← .env file loader
+│   ├── app.php        ← application config
+│   └── database.php   ← database config
 ├── database/
-│   ├── schema.sql
-│   └── seeds/
+│   ├── schema.sql     ← stub (tables added in Milestone 2+)
+│   └── setup.php      ← CLI database creation script
+├── public/            ← ONLY this directory is web-accessible (via Apache vhost)
+│   ├── index.php      ← front controller
+│   ├── .htaccess      ← mod_rewrite rules
+│   └── assets/
+│       ├── css/
+│       ├── js/
+│       └── images/
 ├── storage/
-│   ├── evidence/      ← MUST NOT be publicly served
-│   └── logs/
-└── tests/
-    ├── Unit/
-    ├── Integration/
-    └── Security/
+│   ├── evidence/      ← gitignored, MUST NOT be web-accessible
+│   └── logs/          ← gitignored
+├── tests/
+│   ├── Unit/
+│   ├── Integration/
+│   └── Security/
+├── .env               ← gitignored, local credentials only — NEVER commit
+├── .env.example       ← placeholder template, tracked in git
+├── .gitignore
+└── README.md
 ```
+
+## Planned application structure (not yet created)
+There are no more planned structural items from Milestone 1. Future directories (if needed) will be added within the existing structure as features are built.
 
 ## Naming conventions
 - PHP classes: PascalCase.

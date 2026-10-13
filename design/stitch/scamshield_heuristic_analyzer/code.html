@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"secondary-container":"#8193ff","on-background":"#1b1c1c","secondary-fixed-dim":"#bbc3ff","inverse-primary":"#ffb596","on-surface-variant":"#594238","primary":"#a33e00","surface-container-low":"#f6f3f2","background":"#fbf9f8","on-tertiary":"#ffffff","error-container":"#ffdad6","surface-container-highest":"#e4e2e1","surface-container":"#f0eded","on-secondary":"#ffffff","secondary-fixed":"#dee0ff","on-surface":"#1b1c1c","on-primary-container":"#5f2100","surface-bright":"#fbf9f8","inverse-surface":"#303030","tertiary-fixed-dim":"#6ed2ff","error":"#ba1a1a","on-primary":"#ffffff","tertiary-container":"#00aadc","outline-variant":"#e0c0b3","on-primary-fixed":"#360f00","tertiary":"#006686","surface-container-lowest":"#ffffff","surface":"#fbf9f8","surface-container-high":"#eae8e7","secondary":"#4254be","on-error-container":"#93000a","on-tertiary-fixed":"#001f2b","primary-container":"#ff742d","inverse-on-surface":"#f3f0f0","on-error":"#ffffff","surface-tint":"#a33e00","on-tertiary-fixed-variant":"#004d65","on-primary-fixed-variant":"#7c2e00","primary-fixed":"#ffdbcd","surface-dim":"#dcd9d9","outline":"#8c7166","on-secondary-fixed":"#000f5c","on-secondary-fixed-variant":"#273ba5","primary-fixed-dim":"#ffb596","tertiary-fixed":"#bfe8ff","on-tertiary-container":"#003a4d","on-secondary-container":"#0a2391","surface-variant":"#e4e2e1"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"gutter":"1rem","space-lg":"1.5rem","space-md":"1rem","space-xl":"2.5rem","space-sm":"0.5rem","gutter-desktop":"1.5rem","margin":"1rem","space-xs":"0.25rem","margin-desktop":"2.5rem"},"fontFamily":{"body-md":["IBM Plex Sans"],"label-code-md":["IBM Plex Mono"],"headline-md":["Space Grotesk"],"headline-xl":["Space Grotesk"],"headline-sm":["Space Grotesk"],"headline-xl-mobile":["Space Grotesk"],"headline-lg-mobile":["Space Grotesk"],"headline-lg":["Space Grotesk"],"label-code-lg":["IBM Plex Mono"],"body-lg":["IBM Plex Sans"],"body-sm":["IBM Plex Sans"],"label-code-sm":["IBM Plex Mono"]},"fontSize":{"body-md":["14px",{"lineHeight":"20px","fontWeight":"400"}],"label-code-md":["13px",{"lineHeight":"18px","fontWeight":"500"}],"headline-md":["22px",{"lineHeight":"28px","letterSpacing":"-0.015em","fontWeight":"600"}],"headline-xl":["44px",{"lineHeight":"52px","letterSpacing":"-0.02em","fontWeight":"700"}],"headline-sm":["18px",{"lineHeight":"24px","letterSpacing":"-0.01em","fontWeight":"600"}],"headline-xl-mobile":["32px",{"lineHeight":"40px","letterSpacing":"-0.02em","fontWeight":"700"}],"headline-lg-mobile":["26px",{"lineHeight":"32px","letterSpacing":"-0.02em","fontWeight":"600"}],"headline-lg":["32px",{"lineHeight":"38px","letterSpacing":"-0.02em","fontWeight":"600"}],"label-code-lg":["15px",{"lineHeight":"20px","fontWeight":"500"}],"body-lg":["16px",{"lineHeight":"24px","fontWeight":"400"}],"body-sm":["12px",{"lineHeight":"16px","fontWeight":"400"}],"label-code-sm":["11px",{"lineHeight":"14px","fontWeight":"500"}]}}}}</script></head><body class="bg-surface font-body-md text-on-surface antialiased selection:bg-primary-fixed selection:text-on-primary-fixed"><header class="fixed top-0 left-0 right-0 z-50 bg-surface-container-lowest border-b border-surface-container-highest"><div class="w-full bg-inverse-surface border-b border-primary-container/20 py-1.5 px-4 sm:px-6"><div class="max-w-7xl mx-auto flex items-center justify-between text-inverse-on-surface font-body-sm text-body-sm"><div class="flex items-center gap-2"><span class="font-label-code-sm text-label-code-sm px-1.5 py-0.5 bg-primary-container text-on-primary rounded font-semibold tracking-wider">[CRITICAL NOTICE]</span><span>Never share OTP, UPI PIN or passwords. No bank will ask.</span></div><div class="hidden sm:flex items-center gap-3 font-label-code-sm text-label-code-sm text-surface-container-highest"><span class="inline-block w-1.5 h-1.5 rounded-full bg-primary-container"></span><span>HEURISTIC RIGOR v1.4</span></div></div></div><div class="h-16 max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between"><div class="flex items-center gap-6"><div class="flex items-center gap-3"><img alt="ScamShield Emblem" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1Xn2WkBkhOA2OCpZfsMxc5avDWEtKaGOxqpXAacD3NJtWnJkDmzMQkPbGMDKoFuXqzceboB2sui6qTK7HkxbG_SQ1gcUJWD4Q9EX1JbRHuxBCutwghdHdBrCQTaCNCOkqQWpoqQC26aZdcWPiyqZTQ81PLg0ZifeWX8SMR3b3wp8dIZv14Prl72Yr7a3H1D3rBgxNzrsdQMYeR716X1gNV2tdxH7En9m9qe2gNb6fml3NFAx7849O75og"/><span class="font-headline-sm text-headline-sm tracking-tight text-on-surface">ScamShield</span><span class="hidden lg:inline-block font-label-code-sm text-label-code-sm px-2 py-0.5 bg-surface-container text-on-secondary-container border border-surface-container-highest rounded">[IN-UTILITY v1.4]</span></div><nav class="hidden md:flex items-center gap-6 h-16 pt-0.5" data-active-classes="text-on-surface border-b-2 border-primary font-semibold"><a aria-current="page" class="transition-colors py-5 text-on-surface border-b-2 border-primary font-semibold" data-path="analyzer" href="#">Analyzer</a><a class="text-on-surface-variant hover:text-on-surface font-body-md text-body-md transition-colors py-5" data-path="pattern-registry" href="#">Pattern Registry</a><a class="text-on-surface-variant hover:text-on-surface font-body-md text-body-md transition-colors py-5" data-path="incident-log" href="#">Incident Log</a><a class="text-on-surface-variant hover:text-on-surface font-body-md text-body-md transition-colors py-5" data-path="report-to-cybercrime-gov-in" href="#">Report to cybercrime.gov.in</a></nav></div><div class="flex items-center gap-3 sm:gap-4"><div class="flex items-center gap-2 px-2.5 py-1 bg-surface-container-lowest border border-surface-container-highest rounded"><span class="w-2 h-2 rounded-full bg-on-secondary-container"></span><span class="font-label-code-sm text-label-code-sm text-on-surface font-medium">Citizen Cyber Helpline: <strong class="font-semibold text-on-surface">1930</strong></span></div><a class="hidden sm:inline-flex items-center font-label-code-sm text-label-code-sm text-on-secondary-container hover:underline" href="https://cybercrime.gov.in" rel="noreferrer" target="_blank">cybercrime.gov.in</a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-24 bg-surface"><div class="max-w-7xl mx-auto py-8 px-6"><div class="flex flex-col w-full">
+<!-- SECTION 1: PRIMARY INPUT & CONTROLS -->
+<section class="w-full bg-surface-container-lowest border-b border-surface-container-highest">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+<!-- Operational Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-5 border-b border-surface-container-highest">
+<div>
+<div class="flex items-center gap-2 mb-1.5">
+<span class="inline-block w-2.5 h-2.5 bg-primary-container"></span>
+<span class="font-label-code-sm text-label-code-sm text-on-surface uppercase tracking-wider font-semibold">Civic Heuristic Engine • Version 1.4-L</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">
+            Paste a link, SMS, WhatsApp forward, or UPI handle
+          </h1>
+</div>
+<div class="flex items-center gap-2 self-start md:self-auto">
+<span class="font-label-code-sm text-label-code-sm px-2.5 py-1 bg-surface-container text-on-surface font-medium border border-surface-container-highest rounded">
+            MODE: AIRGAPPED LOCAL PARSER
+          </span>
+</div>
+</div>
+<!-- Mode Switcher Tabs -->
+<div class="pt-5 pb-3 flex flex-wrap gap-2">
+<button class="tab-btn px-4 py-2 font-label-code-md text-label-code-md bg-inverse-surface text-inverse-on-surface border border-inverse-surface rounded transition-colors flex items-center gap-2" id="tab-sms" onclick="switchTab('sms')">
+<span class="material-symbols-outlined text-[16px]">chat</span>
+<span>[1] SMS / Message Text</span>
+</button>
+<button class="tab-btn px-4 py-2 font-label-code-md text-label-code-md bg-surface-container-low text-on-surface-variant hover:text-on-surface border border-surface-container-highest rounded transition-colors flex items-center gap-2" id="tab-url" onclick="switchTab('url')">
+<span class="material-symbols-outlined text-[16px]">link</span>
+<span>[2] URL / Domain Link</span>
+</button>
+<button class="tab-btn px-4 py-2 font-label-code-md text-label-code-md bg-surface-container-low text-on-surface-variant hover:text-on-surface border border-surface-container-highest rounded transition-colors flex items-center gap-2" id="tab-upi" onclick="switchTab('upi')">
+<span class="material-symbols-outlined text-[16px]">qr_code_2</span>
+<span>[3] UPI ID / QR Payload</span>
+</button>
+</div>
+<!-- Primary Textarea -->
+<div class="relative bg-surface-container-lowest border border-surface-container-highest focus-within:border-on-secondary-container transition-colors">
+<label class="sr-only" for="inspector-input">Message or link payload to verify</label>
+<textarea class="w-full p-4 font-label-code-md text-label-code-md text-on-surface bg-transparent border-0 resize-none focus:outline-none focus:ring-0 leading-relaxed placeholder:text-on-surface-variant/40" id="inspector-input" placeholder="Paste suspected communication string, phishing domain link, or UPI VPA..." rows="4">Dear SBI user, your YONO account has been suspended due to pending PAN verification. Immediately update your KYC at http://sbi-kyc-update-portal.in/login or your account will be frozen within 2 hours. Do not ignore.</textarea>
+<div class="flex items-center justify-between px-4 py-2.5 bg-surface-container-low border-t border-surface-container-highest text-on-surface-variant font-label-code-sm text-label-code-sm">
+<div class="flex items-center gap-3">
+<span id="char-count">194 characters</span>
+<span class="text-surface-container-highest">•</span>
+<span class="text-on-secondary-container font-semibold" id="detected-type">[TRAI SENDER PATTERN DETECTED]</span>
+</div>
+<button class="text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1 font-medium" onclick="clearInput()">
+<span class="material-symbols-outlined text-[14px]">close</span> Clear text
+          </button>
+</div>
+</div>
+<!-- Action Row & Quick Presets -->
+<div class="pt-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+<div class="flex flex-wrap items-center gap-3">
+<button class="px-5 py-3 bg-primary-container hover:bg-primary-container/90 text-on-primary font-headline-sm text-headline-sm tracking-tight rounded border border-on-primary-container shadow-none active:translate-y-px transition-all flex items-center gap-2.5" onclick="runInspection()">
+<span class="material-symbols-outlined text-[20px]">cases</span>
+<span>Inspect Message Heuristics</span>
+</button>
+<button class="px-4 py-3 bg-surface-container-lowest hover:bg-surface-container-low text-on-surface font-body-md text-body-md border border-surface-container-highest rounded transition-colors" onclick="clearAll()">
+            Reset
+          </button>
+</div>
+<!-- Sample Loaders -->
+<div class="flex flex-wrap items-center gap-1.5 text-on-surface-variant font-label-code-sm text-label-code-sm">
+<span class="uppercase tracking-wider font-semibold text-on-surface mr-1">Load Presets:</span>
+<button class="px-2.5 py-1.5 bg-surface-container-low hover:bg-surface-container border border-surface-container-highest rounded text-on-surface transition-colors" onclick="loadSample('electricity')">
+            Electricity Cutoff
+          </button>
+<button class="px-2.5 py-1.5 bg-surface-container-low hover:bg-surface-container border border-surface-container-highest rounded text-on-surface transition-colors" onclick="loadSample('courier')">
+            Customs / FedEx Drug
+          </button>
+<button class="px-2.5 py-1.5 bg-surface-container-low hover:bg-surface-container border border-surface-container-highest rounded text-on-surface transition-colors" onclick="loadSample('cashback')">
+            UPI Cashback Collect
+          </button>
+</div>
+</div>
+<!-- Micro Transparency Guarantee -->
+<div class="mt-4 pt-3 border-t border-surface-container-highest flex items-center justify-between text-on-surface-variant font-label-code-sm text-label-code-sm">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[14px] text-tertiary">lock</span>
+<span>Checked using local deterministic rules only. Zero telemetry, cookies, or remote server lookups.</span>
+</div>
+<span class="hidden sm:inline text-on-surface-variant/70">RFC 3986 • NPCI SPEC 2.1 • TRAI TCCCPR-2018 RULES</span>
+</div>
+</div>
+</section>
+<!-- SECTION 2: 12-COLUMN CORE DIAGNOSTIC REPORT -->
+<section class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-8">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- LEFT COLUMN: 8-COLUMN DIAGNOSTIC LEDGER -->
+<div class="lg:col-span-8 flex flex-col gap-6">
+<!-- Critical Verdict Banner -->
+<div class="p-5 bg-surface-container-lowest border-2 border-primary-container rounded">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-surface-container-highest">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-container text-[32px]">warning</span>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-label-code-lg text-label-code-lg font-bold px-2 py-0.5 bg-primary-fixed text-on-primary-fixed rounded border border-primary-container">
+                    [CRITICAL RISK]
+                  </span>
+<span class="font-label-code-sm text-label-code-sm text-primary font-semibold">HEURISTIC SCORE: 94 / 100</span>
+</div>
+<div class="font-headline-sm text-headline-sm text-on-surface mt-1">High-Confidence Phishing &amp; Bank Impersonation</div>
+</div>
+</div>
+<div class="text-left sm:text-right font-label-code-sm text-label-code-sm">
+<span class="text-on-surface-variant block">MATCH VECTOR</span>
+<span class="font-bold text-on-surface">FINANCIAL CREDENTIAL HARVEST</span>
+</div>
+</div>
+<p class="font-body-md text-body-md text-on-surface mt-3 leading-relaxed">
+            High probability of targeted phishing aiming for banking credentials and PAN harvesting. Text displays characteristic coercive urgency mechanics paired with an unauthenticated typosquatted root domain targeting the State Bank of India.
+          </p>
+<div class="mt-3.5 px-3 py-2 bg-surface-container-low border border-surface-container-highest rounded text-on-surface-variant font-label-code-sm text-label-code-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-primary">info</span>
+<span>Results are rule-based indicators, not legal certification. Low risk scores never guarantee absolute safety. Zero data logged on servers.</span>
+</div>
+</div>
+<!-- Signature Component: Annotated URL Anatomy Inspector -->
+<div class="bg-surface-container-lowest border border-surface-container-highest rounded">
+<div class="px-5 py-3.5 bg-surface-container-low border-b border-surface-container-highest flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-secondary-container text-[18px]">travel_explore</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Annotated URL Anatomy Breakdown</span>
+</div>
+<span class="font-label-code-sm text-label-code-sm px-2 py-0.5 bg-surface-container text-on-surface font-semibold border border-surface-container-highest rounded">
+              3 EXPLOIT TOKENS DETECTED
+            </span>
+</div>
+<div class="p-5">
+<div class="font-body-sm text-body-sm text-on-surface-variant mb-2">
+              Extracted Hyperlink Target from incoming payload:
+            </div>
+<!-- Monospace URL Anatomical Tape -->
+<div class="p-4 bg-surface-container-low border border-surface-container-highest rounded overflow-x-auto">
+<div class="font-label-code-lg text-label-code-lg text-on-surface flex items-baseline gap-1 whitespace-nowrap">
+<!-- Token 1: Protocol -->
+<span class="group relative inline-flex flex-col items-center">
+<span class="px-1.5 py-0.5 bg-error-container text-on-error-container border border-error font-bold rounded">http://</span>
+<span class="font-label-code-sm text-label-code-sm text-error font-bold mt-1">[1] UNENCRYPTED</span>
+</span>
+<!-- Token 2: Domain Host -->
+<span class="group relative inline-flex flex-col items-center">
+<span class="px-1.5 py-0.5 bg-primary-fixed text-on-primary-fixed border border-primary font-bold rounded">sbi-kyc-update-portal</span>
+<span class="font-label-code-sm text-label-code-sm text-primary font-bold mt-1">[2] LOOKALIKE TYPOSQUAT</span>
+</span>
+<!-- Token 3: TLD & Path -->
+<span class="group relative inline-flex flex-col items-center">
+<span class="px-1.5 py-0.5 bg-error-container text-on-error-container border border-error font-bold rounded">.in/login</span>
+<span class="font-label-code-sm text-label-code-sm text-error font-bold mt-1">[3] SUSPICIOUS CCTLD PATH</span>
+</span>
+</div>
+</div>
+<!-- Findings Accordion / Details for Tokens -->
+<div class="mt-5 space-y-3">
+<div class="p-3 bg-surface-container-lowest border border-surface-container-highest rounded">
+<div class="flex items-start gap-3">
+<span class="font-label-code-sm text-label-code-sm px-1.5 py-0.5 bg-error text-on-primary font-bold rounded shrink-0">[1]</span>
+<div>
+<span class="font-label-code-md text-label-code-md font-semibold text-on-surface block">Cleartext Protocol Vulnerability (<code class="text-error font-semibold">http://</code>)</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">
+                      No Indian Scheduled Commercial Bank serves login or KYC portals over plain HTTP. Legitimate banking gateways universally mandate TLS/HSTS certificates with strict cryptographic validation.
+                    </p>
+</div>
+</div>
+</div>
+<div class="p-3 bg-surface-container-lowest border border-surface-container-highest rounded">
+<div class="flex items-start gap-3">
+<span class="font-label-code-sm text-label-code-sm px-1.5 py-0.5 bg-primary-container text-on-primary font-bold rounded shrink-0">[2]</span>
+<div>
+<span class="font-label-code-md text-label-code-md font-semibold text-on-surface block">Deceptive Trademark Stacking (<code class="text-primary font-semibold">sbi-kyc-update-portal</code>)</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">
+                      The genuine State Bank of India domain is strictly <span class="font-label-code-sm text-on-secondary-container font-semibold underline">onlinesbi.sbi</span> or <span class="font-label-code-sm text-on-secondary-container font-semibold underline">sbi.co.in</span>. Phishers concatenate keywords ("sbi", "kyc", "update", "portal") separated by hyphens to trick users viewing mobile notifications.
+                    </p>
+</div>
+</div>
+</div>
+<div class="p-3 bg-surface-container-lowest border border-surface-container-highest rounded">
+<div class="flex items-start gap-3">
+<span class="font-label-code-sm text-label-code-sm px-1.5 py-0.5 bg-error text-on-primary font-bold rounded shrink-0">[3]</span>
+<div>
+<span class="font-label-code-md text-label-code-md font-semibold text-on-surface block">Generic Commercial Registrar &amp; Target Endpoint (<code class="text-error font-semibold">.in/login</code>)</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">
+                      Domain was provisioned anonymously without organizational banking identity certification. The destination directs immediately to a stripped-down credential harvest form.
+                    </p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- India-Specific Pattern Match Table -->
+<div class="bg-surface-container-lowest border border-surface-container-highest rounded">
+<div class="px-5 py-3.5 bg-surface-container-low border-b border-surface-container-highest flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]">checklist</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">India-Specific Pattern Triggers</span>
+</div>
+<span class="font-label-code-sm text-label-code-sm text-on-surface-variant">TRAI &amp; RBI COMPLIANCE AUDIT</span>
+</div>
+<div class="divide-y divide-surface-container-highest">
+<!-- Trigger 1 -->
+<div class="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<span class="font-label-code-sm text-label-code-sm px-2 py-0.5 bg-primary-fixed text-on-primary-fixed border border-primary font-semibold rounded">[TRIGGER: COERCIVE_URGENCY]</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Urgency Coercion Window</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                  Text specifies: <code class="font-label-code-sm bg-surface-container-low px-1 py-0.5 border border-surface-container-highest text-on-surface">"account will be frozen within 2 hours"</code>.
+                </p>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                  RBI Master Direction explicitly mandates prior written notice via registered email and post before bank account suspension. Banks never enforce instantaneous 2-hour digital freezes.
+                </p>
+</div>
+<span class="shrink-0 font-label-code-sm text-label-code-sm px-2 py-1 bg-surface-container text-error font-bold border border-surface-container-highest rounded self-start">
+                HIGH SEVERITY
+              </span>
+</div>
+<!-- Trigger 2 -->
+<div class="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<span class="font-label-code-sm text-label-code-sm px-2 py-0.5 bg-primary-fixed text-on-primary-fixed border border-primary font-semibold rounded">[TRIGGER: PSB_IMPERSONATION]</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Public Sector Bank Spoofing</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                  Text uses brand identity: <code class="font-label-code-sm bg-surface-container-low px-1 py-0.5 border border-surface-container-highest text-on-surface">"SBI / YONO"</code>.
+                </p>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                  No corresponding registered Sender Header (e.g. <span class="font-label-code-sm text-on-surface font-semibold">VK-SBIINB</span> or <span class="font-label-code-sm text-on-surface font-semibold">AX-SBIPSG</span>) found in TRAI DLT registry records. Unsolicited private mobile forward.
+                </p>
+</div>
+<span class="shrink-0 font-label-code-sm text-label-code-sm px-2 py-1 bg-surface-container text-error font-bold border border-surface-container-highest rounded self-start">
+                HIGH SEVERITY
+              </span>
+</div>
+<!-- Trigger 3 -->
+<div class="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<span class="font-label-code-sm text-label-code-sm px-2 py-0.5 bg-primary-fixed text-on-primary-fixed border border-primary font-semibold rounded">[TRIGGER: KYC_HARVEST]</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">PAN / KYC Credential Siphon</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                  Payload demands: <code class="font-label-code-sm bg-surface-container-low px-1 py-0.5 border border-surface-container-highest text-on-surface">"Immediately update your KYC"</code>.
+                </p>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                  Periodic re-KYC for Scheduled Banks is carried out strictly inside authorized mobile applications or through RBI Video-KYC (V-CIP) portals, never third-party redirect URLs.
+                </p>
+</div>
+<span class="shrink-0 font-label-code-sm text-label-code-sm px-2 py-1 bg-surface-container text-error font-bold border border-surface-container-highest rounded self-start">
+                HIGH SEVERITY
+              </span>
+</div>
+<!-- Trigger 4 -->
+<div class="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<span class="font-label-code-sm text-label-code-sm px-2 py-0.5 bg-surface-container text-on-surface border border-surface-container-highest font-semibold rounded">[TRIGGER: UNAUTH_CHANNEL]</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">DLT Header Non-Compliance</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                  Telecom Regulatory Authority of India mandates all transactional SMS to carry 6-character registered alphanumeric headers. This message originates from a non-registered carrier route.
+                </p>
+</div>
+<span class="shrink-0 font-label-code-sm text-label-code-sm px-2 py-1 bg-surface-container text-on-surface-variant font-bold border border-surface-container-highest rounded self-start">
+                MEDIUM SEVERITY
+              </span>
+</div>
+</div>
+</div>
+</div>
+<!-- RIGHT COLUMN: 4-COLUMN IMMEDIATE TRIAGE & REPORTING ACTION PANEL -->
+<div class="lg:col-span-4 flex flex-col gap-6">
+<!-- Action Panel Container -->
+<div class="bg-surface-container-lowest border-2 border-inverse-surface rounded p-5 sm:p-6">
+<div class="flex items-center gap-2 mb-4 pb-3 border-b border-surface-container-highest">
+<span class="material-symbols-outlined text-primary-container text-[22px]">emergency</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">What to do right now</h2>
+</div>
+<div class="space-y-4">
+<div class="flex items-start gap-3">
+<span class="font-label-code-sm text-label-code-sm w-6 h-6 rounded bg-inverse-surface text-inverse-on-surface flex items-center justify-center font-bold shrink-0">1</span>
+<div>
+<strong class="font-body-md text-body-md text-on-surface block font-semibold">DO NOT tap the link or enter PAN</strong>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Never enter passwords, PAN, or debit card CVVs on unverified domains.</p>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<span class="font-label-code-sm text-label-code-sm w-6 h-6 rounded bg-inverse-surface text-inverse-on-surface flex items-center justify-center font-bold shrink-0">2</span>
+<div>
+<strong class="font-body-md text-body-md text-on-surface block font-semibold">If credentials were already shared:</strong>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Call your bank immediately to block NetBanking access and freeze all debit/credit cards linked to your account.</p>
+<div class="mt-2 font-label-code-sm text-label-code-sm p-2 bg-surface-container-low border border-surface-container-highest rounded text-on-surface">
+                  SBI National Helpline: <strong class="text-on-secondary-container">1800 1234</strong> / <strong class="text-on-secondary-container">1800 2100</strong>
+</div>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<span class="font-label-code-sm text-label-code-sm w-6 h-6 rounded bg-inverse-surface text-inverse-on-surface flex items-center justify-center font-bold shrink-0">3</span>
+<div>
+<strong class="font-body-md text-body-md text-on-surface block font-semibold">Dial Statutory Helpline 1930</strong>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">National Cyber Crime Reporting Helpline operated by the Ministry of Home Affairs (I4C).</p>
+</div>
+</div>
+</div>
+<!-- Report Generator Formatter -->
+<div class="mt-6 pt-5 border-t border-surface-container-highest">
+<div class="font-headline-sm text-headline-sm text-on-surface mb-2">Formal Reporting Tool</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">
+              Generate a pre-formatted incident summary structured for copy-pasting into the national cybercrime portal.
+            </p>
+<button class="w-full py-3 px-4 bg-inverse-surface hover:bg-inverse-surface/90 text-inverse-on-surface font-body-md text-body-md font-semibold border border-inverse-surface rounded transition-colors flex items-center justify-center gap-2 mb-2" onclick="generateReport()">
+<span class="material-symbols-outlined text-[18px]">content_copy</span>
+<span>Prepare Report for cybercrime.gov.in</span>
+</button>
+<button class="w-full py-2.5 px-4 bg-surface-container-low hover:bg-surface-container text-on-surface font-label-code-sm text-label-code-sm border border-surface-container-highest rounded transition-colors flex items-center justify-center gap-2" onclick="downloadIncidentJson()">
+<span class="material-symbols-outlined text-[16px]">download</span>
+<span>Export Evidence Packet (.json)</span>
+</button>
+<!-- Pre-formatted Output Modal/Box -->
+<div class="hidden mt-4 p-3 bg-surface-container-low border border-surface-container-highest rounded" id="report-output-box">
+<div class="flex items-center justify-between pb-2 mb-2 border-b border-surface-container-highest font-label-code-sm text-label-code-sm">
+<span class="font-bold text-on-surface">[COMPLAINT FORMAT]</span>
+<button class="text-on-secondary-container font-semibold hover:underline" id="copy-btn" onclick="copyComplaintText()">Copy text</button>
+</div>
+<pre class="font-label-code-sm text-label-code-sm text-on-surface-variant whitespace-pre-wrap leading-tight select-all" id="complaint-text">COMPLAINT SUMMARY FOR CYBERCRIME.GOV.IN
+INCIDENT TYPE: Phishing / Banking Impersonation
+TARGETED BRAND: State Bank of India (YONO)
+SUSPECTED DOMAIN: http://sbi-kyc-update-portal.in/login
+PAYLOAD DETECTED: "Dear SBI user, your YONO account has been suspended due to pending PAN verification..."
+COERCIVE MECHANIC: 2-hour account freeze threat
+TIMESTAMP (UTC): 2025-05-18T10:30:00Z
+EVIDENCE GENERATED VIA: ScamShield Heuristic Validator v1.4</pre>
+</div>
+</div>
+<!-- Official Registry Verification Link -->
+<div class="mt-5 pt-4 border-t border-surface-container-highest text-center">
+<a class="font-label-code-sm text-label-code-sm text-on-secondary-container hover:underline inline-flex items-center gap-1 font-semibold" href="https://cms.rbi.org.in" rel="noreferrer" target="_blank">
+<span>[VERIFY WITH RBI OMBUDSMAN -&gt;]</span>
+</a>
+</div>
+</div>
+<!-- Verified Authority Channels Mini-Card -->
+<div class="bg-surface-container-lowest border border-surface-container-highest rounded p-5">
+<div class="flex items-center gap-2 mb-3">
+<span class="material-symbols-outlined text-secondary text-[18px]">verified_user</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Official Verified Channels</span>
+</div>
+<div class="space-y-2.5 font-label-code-sm text-label-code-sm">
+<div class="flex justify-between items-center py-1 border-b border-surface-container-highest">
+<span class="text-on-surface-variant">SBI Web Portal:</span>
+<span class="font-semibold text-on-surface">onlinesbi.sbi</span>
+</div>
+<div class="flex justify-between items-center py-1 border-b border-surface-container-highest">
+<span class="text-on-surface-variant">TRAI DLT Portal:</span>
+<span class="font-semibold text-on-surface">trai.gov.in</span>
+</div>
+<div class="flex justify-between items-center py-1 border-b border-surface-container-highest">
+<span class="text-on-surface-variant">MHA Cyber Helpline:</span>
+<span class="font-bold text-primary">1930</span>
+</div>
+<div class="flex justify-between items-center py-1">
+<span class="text-on-surface-variant">RBI Sachet Portal:</span>
+<span class="font-semibold text-on-secondary-container underline"><a href="https://sachet.rbi.org.in" rel="noreferrer" target="_blank">sachet.rbi.org.in</a></span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 3: COMMON LOCAL SCAM REGISTRY SNAPSHOT -->
+<section class="w-full bg-surface-container-lowest border-t border-surface-container-highest">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 py-10">
+<div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6 pb-4 border-b border-surface-container-highest">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="w-2 h-2 bg-on-secondary-container"></span>
+<span class="font-label-code-sm text-label-code-sm uppercase tracking-wider font-semibold text-on-surface">Registry Surveillance Ledger</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface">
+            Active Threat Patterns in India
+          </h2>
+</div>
+<span class="font-label-code-sm text-label-code-sm text-on-surface-variant">
+          Updated dynamically against I4C &amp; CERT-In public advisories
+        </span>
+</div>
+<!-- Ledger Table (Editorial Broadsheet Format) -->
+<div class="border border-surface-container-highest rounded overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-surface-container-highest font-label-code-sm text-label-code-sm text-on-surface uppercase tracking-wider">
+<th class="py-3 px-4 font-semibold">Scam Type</th>
+<th class="py-3 px-4 font-semibold">Deception Vector</th>
+<th class="py-3 px-4 font-semibold">Primary Heuristic Trigger</th>
+<th class="py-3 px-4 font-semibold">Official Channel to Verify</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-highest font-body-sm text-body-sm text-on-surface">
+<!-- Row 1: Electricity Bill -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-4 px-4 align-top font-label-code-md text-label-code-md font-semibold text-on-surface">
+<span class="px-1.5 py-0.5 bg-primary-fixed text-on-primary-fixed border border-primary text-[11px] rounded mr-1.5">[VECTOR-01]</span>
+                Electricity Cutoff Notice
+              </td>
+<td class="py-4 px-4 align-top">
+<p class="font-label-code-sm text-label-code-sm text-on-surface-variant bg-surface-container-low p-2 rounded border border-surface-container-highest">
+                  "Dear consumer, your electricity will be disconnected tonight at 9:30 PM from the power station due to an unpaid bill. Immediately contact officer Sharma at 98765-XXXXX."
+                </p>
+</td>
+<td class="py-4 px-4 align-top space-y-1">
+<div class="font-semibold text-error">Arbitrary 10-digit Mobile Number</div>
+<p class="text-on-surface-variant text-[11px]">DISCOMs never instruct users to WhatsApp or dial private numbers for bill settlement.</p>
+</td>
+<td class="py-4 px-4 align-top">
+<span class="font-label-code-sm text-label-code-sm text-on-secondary-container font-semibold">
+                  State DISCOM Official App (e.g. BSES, TANGEDCO, MSEDCL, UPPCL)
+                </span>
+</td>
+</tr>
+<!-- Row 2: Fake FedEx / Customs -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-4 px-4 align-top font-label-code-md text-label-code-md font-semibold text-on-surface">
+<span class="px-1.5 py-0.5 bg-primary-fixed text-on-primary-fixed border border-primary text-[11px] rounded mr-1.5">[VECTOR-02]</span>
+                FedEx / Customs Contraband
+              </td>
+<td class="py-4 px-4 align-top">
+<p class="font-label-code-sm text-label-code-sm text-on-surface-variant bg-surface-container-low p-2 rounded border border-surface-container-highest">
+                  "A parcel sent via FedEx in your name has been seized by Mumbai Customs containing passports and banned narcotics. Join Skype video call immediately for clearance."
+                </p>
+</td>
+<td class="py-4 px-4 align-top space-y-1">
+<div class="font-semibold text-error">Skype / WhatsApp "Digital Arrest"</div>
+<p class="text-on-surface-variant text-[11px]">Indian Police or Customs never conduct interrogations or "digital arrests" over Skype or WhatsApp.</p>
+</td>
+<td class="py-4 px-4 align-top">
+<span class="font-label-code-sm text-label-code-sm text-on-secondary-container font-semibold">
+                  Direct Tracking via <code class="text-on-surface">fedex.com/in</code> or Local Police Station
+                </span>
+</td>
+</tr>
+<!-- Row 3: Part-Time Telegram Job -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-4 px-4 align-top font-label-code-md text-label-code-md font-semibold text-on-surface">
+<span class="px-1.5 py-0.5 bg-primary-fixed text-on-primary-fixed border border-primary text-[11px] rounded mr-1.5">[VECTOR-03]</span>
+                Hotel / YouTube Review Task
+              </td>
+<td class="py-4 px-4 align-top">
+<p class="font-label-code-sm text-label-code-sm text-on-surface-variant bg-surface-container-low p-2 rounded border border-surface-container-highest">
+                  "Work from home: Earn ₹2,500 - ₹8,000 per day by rating hotels on Google Maps and liking YouTube videos. Join our Telegram group for immediate payouts."
+                </p>
+</td>
+<td class="py-4 px-4 align-top space-y-1">
+<div class="font-semibold text-error">Advance Fee &amp; Telegram Escrow</div>
+<p class="text-on-surface-variant text-[11px]">Initial payouts of ₹150 are made to build trust, followed by demands for ₹10,000+ "prepaid VIP tasks".</p>
+</td>
+<td class="py-4 px-4 align-top">
+<span class="font-label-code-sm text-label-code-sm text-on-secondary-container font-semibold">
+                  National Career Service (<a class="underline" href="https://ncs.gov.in" rel="noreferrer" target="_blank">ncs.gov.in</a>)
+                </span>
+</td>
+</tr>
+<!-- Row 4: UPI Reverse Charge -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-4 px-4 align-top font-label-code-md text-label-code-md font-semibold text-on-surface">
+<span class="px-1.5 py-0.5 bg-primary-fixed text-on-primary-fixed border border-primary text-[11px] rounded mr-1.5">[VECTOR-04]</span>
+                UPI QR "Receive Money" Trap
+              </td>
+<td class="py-4 px-4 align-top">
+<p class="font-label-code-sm text-label-code-sm text-on-surface-variant bg-surface-container-low p-2 rounded border border-surface-container-highest">
+                  "Buyer on OLX claims to send you advance payment: 'Scan this QR code and enter your UPI PIN to accept ₹15,000 into your account immediately.'"
+                </p>
+</td>
+<td class="py-4 px-4 align-top space-y-1">
+<div class="font-semibold text-error">PIN Entry on Inbound Transaction</div>
+<p class="text-on-surface-variant text-[11px]">NPCI architecture fundamental: UPI PIN is entered ONLY to deduct funds, NEVER to receive funds.</p>
+</td>
+<td class="py-4 px-4 align-top">
+<span class="font-label-code-sm text-label-code-sm text-on-secondary-container font-semibold">
+                  NPCI UPI Safety Directive (<a class="underline" href="https://npci.org.in" rel="noreferrer" target="_blank">npci.org.in</a>)
+                </span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+</div>
+<script>
+  // Sample Data Registry
+  const samples = {
+    sbi: "Dear SBI user, your YONO account has been suspended due to pending PAN verification. Immediately update your KYC at http://sbi-kyc-update-portal.in/login or your account will be frozen within 2 hours. Do not ignore.",
+    electricity: "Dear consumer, your electricity connection (CA# 102938472) will be disconnected tonight at 9:30 PM from the power station due to an unpaid bill of ₹4,820. Call Electricity Officer R.K. Verma immediately at 98210-94821 to prevent disconnection.",
+    courier: "FedEx Alert: Parcel with tracking #FDX-99214-IN addressed to you has been confiscated by Mumbai Narcotics Bureau. 5 passports and illegal substances detected. Connect to Skype ID: customs_official_verify to avoid non-bailable warrant.",
+    cashback: "Congratulations! You have won ₹2,499 PhonePe Diwali Cashback. Tap this link to claim: upi://pay?pa=cashback.rewards91@oksbi&pn=CashbackPortal&am=2499&cu=INR. Scan QR and enter UPI PIN to deposit into bank."
+  };
+
+  function updateCharCount() {
+    const input = document.getElementById('inspector-input');
+    const counter = document.getElementById('char-count');
+    if (input && counter) {
+      counter.innerText = input.value.length + " characters";
+    }
+  }
+
+  const inspectorInput = document.getElementById('inspector-input');
+  if (inspectorInput) {
+    inspectorInput.addEventListener('input', updateCharCount);
+  }
+
+  function clearInput() {
+    const input = document.getElementById('inspector-input');
+    if (input) {
+      input.value = '';
+      updateCharCount();
+      input.focus();
+    }
+  }
+
+  function clearAll() {
+    clearInput();
+    const reportBox = document.getElementById('report-output-box');
+    if (reportBox) reportBox.classList.add('hidden');
+  }
+
+  function loadSample(key) {
+    const input = document.getElementById('inspector-input');
+    const typeIndicator = document.getElementById('detected-type');
+    if (input && samples[key]) {
+      input.value = samples[key];
+      updateCharCount();
+      if (typeIndicator) {
+        if (key === 'electricity') typeIndicator.innerText = '[UTILITY DISCOM SPOOF DETECTED]';
+        else if (key === 'courier') typeIndicator.innerText = '[CUSTOMS EXTORTION PATTERN DETECTED]';
+        else if (key === 'cashback') typeIndicator.innerText = '[UPI REVERSE PAYLOAD DETECTED]';
+        else typeIndicator.innerText = '[TRAI SENDER PATTERN DETECTED]';
+      }
+    }
+  }
+
+  function switchTab(type) {
+    const tabs = ['sms', 'url', 'upi'];
+    tabs.forEach(t => {
+      const btn = document.getElementById('tab-' + t);
+      if (btn) {
+        if (t === type) {
+          btn.className = "tab-btn px-4 py-2 font-label-code-md text-label-code-md bg-inverse-surface text-inverse-on-surface border border-inverse-surface rounded transition-colors flex items-center gap-2";
+        } else {
+          btn.className = "tab-btn px-4 py-2 font-label-code-md text-label-code-md bg-surface-container-low text-on-surface-variant hover:text-on-surface border border-surface-container-highest rounded transition-colors flex items-center gap-2";
+        }
+      }
+    });
+
+    const input = document.getElementById('inspector-input');
+    if (input) {
+      if (type === 'url') {
+        input.value = "http://sbi-kyc-update-portal.in/login";
+      } else if (type === 'upi') {
+        input.value = "upi://pay?pa=secure-refund-sbi@axl&pn=StateBankSupport&am=5000&cu=INR";
+      } else {
+        input.value = samples.sbi;
+      }
+      updateCharCount();
+    }
+  }
+
+  function runInspection() {
+    const input = document.getElementById('inspector-input');
+    if (!input || !input.value.trim()) {
+      alert("Please enter a message, URL, or UPI string to inspect.");
+      return;
+    }
+    // Visual feedback for local calculation
+    const originalText = input.value;
+    input.style.opacity = '0.6';
+    setTimeout(() => {
+      input.style.opacity = '1';
+    }, 200);
+  }
+
+  function generateReport() {
+    const box = document.getElementById('report-output-box');
+    if (box) {
+      box.classList.remove('hidden');
+      box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
+
+  function copyComplaintText() {
+    const textEl = document.getElementById('complaint-text');
+    const btn = document.getElementById('copy-btn');
+    if (textEl) {
+      navigator.clipboard.writeText(textEl.innerText).then(() => {
+        if (btn) {
+          const original = btn.innerText;
+          btn.innerText = "Copied to clipboard!";
+          setTimeout(() => { btn.innerText = original; }, 2000);
+        }
+      });
+    }
+  }
+
+  function downloadIncidentJson() {
+    const incidentData = {
+      system: "ScamShield Heuristic Engine v1.4",
+      timestamp_utc: new Date().toISOString(),
+      analysis: {
+        score: 94,
+        verdict: "CRITICAL_RISK",
+        category: "BANKING_IMPERSONATION_PHISHING",
+        targeted_entity: "State Bank of India",
+        extracted_entities: {
+          url: "http://sbi-kyc-update-portal.in/login",
+          protocol: "http",
+          domain: "sbi-kyc-update-portal.in",
+          path: "/login",
+          coercive_deadline: "2 hours"
+        },
+        matched_heuristics: [
+          "COERCIVE_URGENCY",
+          "PSB_IMPERSONATION",
+          "KYC_HARVEST",
+          "UNAUTHENTICATED_CLEAR_PROTOCOL"
+        ]
+      },
+      statutory_helpline: "1930",
+      official_portal: "cybercrime.gov.in"
+    };
+
+    const blob = new Blob([JSON.stringify(incidentData, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "scamshield-evidence-" + Date.now() + ".json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+</script></div></main><footer class="w-full bg-surface-container-lowest border-t border-surface-container-highest mt-auto"><div class="max-w-7xl mx-auto py-10 px-6"><div class="grid grid-cols-1 md:grid-cols-12 gap-8 pb-8 border-b border-surface-container-highest"><div class="md:col-span-7"><div class="flex items-center gap-2 mb-3"><span class="w-2 h-2 rounded-none bg-primary"></span><span class="font-headline-sm text-headline-sm text-on-surface">Forensic Architecture &amp; Civic Truth</span></div><p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed max-w-2xl">ScamShield is an open heuristic analyzer, not an intelligence agency. Results are rule-based indicators, not definitive proof of guilt or innocence. Designed strictly for preemptive civic vigilance and verification before transactional commitment.</p></div><div class="md:col-span-5 flex flex-col justify-between"><div class="p-3.5 bg-surface-container-low border border-surface-container-highest rounded"><div class="font-label-code-sm text-label-code-sm text-on-surface-variant uppercase tracking-wider mb-1">Statutory Hotline</div><div class="font-label-code-md text-label-code-md text-on-surface font-semibold">National Cyber Crime Helpline: 1930</div><div class="font-body-sm text-body-sm text-on-surface-variant mt-1">Official Reporting Portal: <a class="text-on-secondary-container underline" href="https://cybercrime.gov.in" rel="noreferrer" target="_blank">cybercrime.gov.in</a></div></div></div></div><div class="pt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 font-label-code-sm text-label-code-sm text-on-surface-variant"><div class="flex flex-wrap gap-x-6 gap-y-2"><a class="hover:text-on-surface transition-colors" data-path="inspection-rules-and-heuristics" href="#">Inspection Rules &amp; Heuristics</a><a class="hover:text-on-surface transition-colors" data-path="zero-data-retention-guarantee" href="#">Zero Data Retention Guarantee (Local Processing)</a><a class="hover:text-on-surface transition-colors" data-path="incident-export" href="#">Incident Export</a></div><div class="text-on-surface-variant/80">IN-CYBER-SHIELD • NON-COMMERCIAL PUBLIC HEURISTIC SYSTEM</div></div></div></footer></body></html>
