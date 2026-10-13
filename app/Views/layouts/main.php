@@ -1,19 +1,22 @@
-<!DOCTYPE html>
+<?php
+use App\Support\Csrf;
+use App\Support\Session;
+?><!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    <!-- CSRF token available to JS for any future fetch()-based requests -->
+    <meta name="csrf-token" content="<?= htmlspecialchars(Csrf::token(), ENT_QUOTES, 'UTF-8') ?>">
 
-    <title><?= htmlspecialchars($title ?? 'ScamShield', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?> — ScamShield</title>
+    <title><?= htmlspecialchars($title ?? 'ScamShield', ENT_QUOTES|ENT_SUBSTITUTE, 'UTF-8') ?> — ScamShield</title>
 
-    <!-- Design system CSS (no CDN frameworks) -->
     <link rel="stylesheet" href="/assets/css/tokens.css">
     <link rel="stylesheet" href="/assets/css/base.css">
     <link rel="stylesheet" href="/assets/css/components.css">
 
-    <!-- Per-page CSS injected by controller (optional) -->
     <?php if (!empty($pageCss)): ?>
         <?php foreach ((array)$pageCss as $cssFile): ?>
             <link rel="stylesheet" href="<?= htmlspecialchars($cssFile, ENT_QUOTES, 'UTF-8') ?>">
@@ -22,29 +25,45 @@
 </head>
 <body>
 
-<!-- ===== System warning strip (always visible, non-dismissible) ===== -->
 <?php include dirname(__DIR__) . '/partials/warning-strip.php'; ?>
 
-<!-- ===== Sticky site header (nav) ===== -->
 <header class="site-header" role="banner">
-    <?php include dirname(__DIR__) . '/partials/nav.php'; ?>
+    <?php
+    // Pass auth state to nav partial
+    $navUser    = Session::user();
+    $navIsAdmin = Session::isAdmin();
+    include dirname(__DIR__) . '/partials/nav.php';
+    ?>
 </header>
 
-<!-- ===== Skip to main (accessibility) ===== -->
 <a href="#main-content" class="skip-link">Skip to main content</a>
 
-<!-- ===== Main content ===== -->
 <main id="main-content" tabindex="-1">
+<?php
+// Flash messages (success / info) displayed globally
+$_flashSuccess = Session::getFlash('success');
+$_flashError   = Session::getFlash('error');
+if ($_flashSuccess): ?>
+    <div class="container" style="padding-top:var(--space-md);">
+        <div class="info-strip" role="status" style="background:var(--color-blue-tint-8);border-color:var(--color-blue);">
+            <?= htmlspecialchars($_flashSuccess, ENT_QUOTES|ENT_SUBSTITUTE, 'UTF-8') ?>
+        </div>
+    </div>
+<?php endif;
+if ($_flashError): ?>
+    <div class="container" style="padding-top:var(--space-md);">
+        <div class="error-state" role="alert">
+            <?= htmlspecialchars($_flashError, ENT_QUOTES|ENT_SUBSTITUTE, 'UTF-8') ?>
+        </div>
+    </div>
+<?php endif; ?>
     <?= $content ?? '' ?>
 </main>
 
-<!-- ===== Footer ===== -->
 <?php include dirname(__DIR__) . '/partials/footer.php'; ?>
 
-<!-- Minimal inline JS: mark body as JS-enabled for progressive enhancement -->
 <script>document.body.classList.add('js-enabled');</script>
 
-<!-- Per-page JS injected by controller (optional) -->
 <?php if (!empty($pageJs)): ?>
     <?php foreach ((array)$pageJs as $jsFile): ?>
         <script src="<?= htmlspecialchars($jsFile, ENT_QUOTES, 'UTF-8') ?>" defer></script>
@@ -55,7 +74,6 @@
 </html>
 
 <style>
-/* Layout: sticky header + warning strip */
 .site-header {
     position: sticky;
     top: 0;
@@ -65,8 +83,6 @@
     background-color: var(--surface-container-lowest);
     border-bottom: var(--border-hairline);
 }
-
-/* Skip-to-main link (visually hidden until focused) */
 .skip-link {
     position: absolute;
     top: -100px;
@@ -79,9 +95,6 @@
     z-index: 9999;
     text-decoration: none;
     border-radius: var(--radius-micro);
-    transition: top 0.1s ease;
 }
-.skip-link:focus {
-    top: var(--space-sm);
-}
+.skip-link:focus { top: var(--space-sm); }
 </style>

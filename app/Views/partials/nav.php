@@ -30,16 +30,24 @@ $currentPage = $currentPage ?? '';
         <!-- Primary nav links -->
         <nav class="site-nav__links" aria-label="Site pages">
             <a href="/"
-               class="site-nav__link <?= $currentPage === 'home' ? 'is-active' : '' ?>"
-               <?= $currentPage === 'home' ? 'aria-current="page"' : '' ?>>
+               class="site-nav__link <?= ($currentPage ?? '') === 'home' ? 'is-active' : '' ?>"
+               <?= ($currentPage ?? '') === 'home' ? 'aria-current="page"' : '' ?>>
                 Analyzer
             </a>
             <span class="site-nav__link site-nav__link--disabled"
                   aria-disabled="true"
                   title="Coming soon">Pattern Registry</span>
+            <?php if (!empty($navUser)): ?>
+            <a href="/incidents"
+               class="site-nav__link <?= ($currentPage ?? '') === 'incidents' ? 'is-active' : '' ?>"
+               <?= ($currentPage ?? '') === 'incidents' ? 'aria-current="page"' : '' ?>>
+                My Incidents
+            </a>
+            <?php else: ?>
             <span class="site-nav__link site-nav__link--disabled"
                   aria-disabled="true"
-                  title="Coming soon">Incident Log</span>
+                  title="Sign in to access incidents">Incident Log</span>
+            <?php endif; ?>
             <a href="https://cybercrime.gov.in"
                class="site-nav__link"
                rel="noopener noreferrer"
@@ -48,19 +56,24 @@ $currentPage = $currentPage ?? '';
             </a>
         </nav>
 
-        <!-- Right cluster: helpline + external link -->
+        <!-- Right cluster: helpline + auth -->
         <div class="site-nav__right">
             <div class="site-nav__helpline t-code-sm" aria-label="Citizen Cyber Helpline 1930">
                 <span class="site-nav__helpline-dot" aria-hidden="true"></span>
                 Helpline: <strong>1930</strong>
             </div>
-            <a href="https://cybercrime.gov.in"
-               class="site-nav__ext-link t-code-sm"
-               rel="noopener noreferrer"
-               target="_blank"
-               aria-label="Visit cybercrime.gov.in (opens in new tab)">
-                cybercrime.gov.in
-            </a>
+            <?php if (!empty($navUser)): ?>
+                <?php if (!empty($navIsAdmin)): ?>
+                    <a href="/admin/incidents" class="t-code-sm site-nav__ext-link" style="color:var(--primary-container);">[ADMIN]</a>
+                <?php endif; ?>
+                <span class="t-code-sm" style="color:var(--on-surface-variant);">
+                    <?= htmlspecialchars($navUser['display_name'], ENT_QUOTES, 'UTF-8') ?>
+                </span>
+                <a href="/logout" class="btn btn-secondary btn-sm">Sign Out</a>
+            <?php else: ?>
+                <a href="/login"    class="t-code-sm site-nav__ext-link">Sign In</a>
+                <a href="/register" class="btn btn-secondary btn-sm">Register</a>
+            <?php endif; ?>
         </div>
 
     </div>

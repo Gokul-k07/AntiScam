@@ -106,8 +106,13 @@ class UrlAnalysisService
 
     /** UPI-specific scam phrases. */
     private const UPI_SCAM_PHRASES = [
-        'enter upi pin to receive', 'scan to receive', 'pin to accept',
-        'cashback qr', 'refund qr', 'enter pin to claim', 'approved refund',
+        'upi pin to receive',      // "enter your UPI PIN to receive money"
+        'enter upi pin to receive',
+        'pin to receive',
+        'scan to receive',
+        'pin to accept',
+        'cashback qr', 'refund qr',
+        'enter pin to claim', 'approved refund',
         'army official verification', 'pin to deposit',
     ];
 

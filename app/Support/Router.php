@@ -19,6 +19,9 @@ class Router
     /** @var callable|null */
     private $notFoundHandler = null;
 
+    /** @var callable|null */
+    private $dynamicHandler = null;
+
     /**
      * Register a route.
      *
@@ -54,6 +57,15 @@ class Router
     }
 
     /**
+     * Register a dynamic route handler called before the 404 handler.
+     * Receives (string $method, string $path) and returns bool (true = handled).
+     */
+    public function setDynamicHandler(callable $handler): void
+    {
+        $this->dynamicHandler = $handler;
+    }
+
+    /**
      * Match and dispatch the current request.
      *
      * @param string $method HTTP method from $_SERVER['REQUEST_METHOD']
@@ -69,6 +81,13 @@ class Router
         if (isset($this->routes[$method][$path])) {
             ($this->routes[$method][$path])();
             return;
+        }
+
+        // Try dynamic (pattern) handler before 404
+        if ($this->dynamicHandler !== null) {
+            if (($this->dynamicHandler)($method, $path)) {
+                return;
+            }
         }
 
         // No match — call 404 handler.

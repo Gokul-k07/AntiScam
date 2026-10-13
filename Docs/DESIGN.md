@@ -1,105 +1,126 @@
 # ScamShield — UI and Experience Design
 
-- **Status:** Initial baseline, v0.1
-- **Last reviewed:** 2026-10-12
+- **Status:** Implemented v1.0 (Stitch-approved design system)
+- **Last reviewed:** 2026-10-13
 
 ## 1. Design objective
 
-Create a trustworthy, calm, accessible security interface. The product should help users understand the next safe action, not frighten them with dramatic colors or imply certainty that the system does not possess.
+Authoritative, high-density forensic verification interface for civic anti-scam utility.
+Tone: blunt, objective, civic, analytically rigorous.
+Aesthetic: Structural Utility — ruled grids, hairline borders, flat depth. No drop shadows, no gradients, no pill-style radii.
 
-## 2. Visual direction
+## 2. Source of truth
 
-- Use a clean, modern, responsive layout with generous spacing.
-- Use a neutral light theme first; dark theme can follow after usability is stable.
-- Use a restrained security palette: dark navy/charcoal for text, blue for primary actions, amber for caution, red for high-risk warnings, and green only for positive/verified states.
-- Do not use color as the only risk signal; pair colors with labels and icons.
-- Avoid fake counters, fabricated detection statistics, fake trust badges, and invented testimonials.
-- Use Bootstrap components where they help consistency, but customize branding and spacing.
+`design/stitch/design/DESIGN.md` is the canonical visual reference (Stitch-exported, October 2026).
+The three exported screens map directly to implemented PHP views:
 
-## 3. Information architecture
+| Stitch screen folder | PHP view |
+|---|---|
+| `scamshield_civic_scam_checking_utility` | `app/Views/pages/home.php` |
+| `scamshield_heuristic_analyzer` | `app/Views/pages/analyzer.php` |
+| `scamshield_link_analysis_result_specimen_link_8841_in` | `app/Views/analysis/url_result.php` |
 
-### Public
-- Home / overview
-- How analysis works
-- Safety and limitations
-- Login / registration
-- Privacy notice
+`design/stitch/` is kept as a reference; it is not served publicly.
 
-### Signed-in user
-- Dashboard
-- Analyze URL
-- Analyze message
-- Analysis history
-- Create incident report
-- My reports / report detail
-- Evidence management
-- Account settings / logout
+## 3. Color palette (implemented)
 
-### Administrator
-- Admin overview
-- Report queue
-- Report detail and evidence access
-- Status-change workflow
-- Audit log view
+All tokens are CSS custom properties in `public/assets/css/tokens.css`.
 
-All admin pages and actions must be protected by server-side authorization.
+| Role | Hex | Primary token |
+|---|---|---|
+| Safety Orange — threat signals, primary CTA | `#FF742D` | `--primary-container` |
+| Trust Blue — verified facts, focus ring | `#0A2391` | `--on-secondary-container` |
+| Structural Charcoal — ink, framing | `#373737` | `--color-charcoal` |
+| Canvas White — base inspection surface | `#FFFFFF` | `--color-canvas` |
+| Orange tint 10% — threat highlight bg | `#FFF1EA` | `--color-orange-tint-10` |
+| Blue tint 8% — verified indicator bg | `#EBEFFE` | `--color-blue-tint-8` |
+| Charcoal tint 6% — code containers | `#F3F3F3` | `--color-charcoal-tint-6` |
+| Hairline dividers | `#E2E2E2` | `--color-charcoal-tint-15` |
 
-## 4. Core analysis-result layout
+The old Bootstrap-era palette (`#1a2340`, `#1d4ed8`, `#d97706`) is fully replaced.
 
-1. **Result heading:** “Potentially suspicious” or “No known indicator found” rather than “Definitely a scam” / “100% safe.”
-2. **Risk band:** Low / Medium / High, with text and icon.
-3. **Confidence/limitations note:** Explain that this is a preliminary assessment and can be wrong.
-4. **Reasons:** List each triggered rule or source match, in plain language.
-5. **Recommended action:** Context-specific next steps, such as not opening the link, not sharing credentials, contacting the organization through a known official channel, or contacting the bank immediately if money was sent.
-6. **Source status:** Show whether threat-intelligence checking succeeded, found a match, returned no match, or was unavailable.
-7. **Actions:** Re-analyze, save result (if signed in), or create an incident report.
+## 4. Typography (implemented)
 
-## 5. UX copy rules
+| Scale | Font | Size | Weight |
+|---|---|---|---|
+| headline-xl | Space Grotesk | 44px (mob: 32px) | 700 |
+| headline-lg | Space Grotesk | 32px (mob: 26px) | 600 |
+| headline-md | Space Grotesk | 22px | 600 |
+| headline-sm | Space Grotesk | 18px | 600 |
+| body-lg/md/sm | IBM Plex Sans | 16/14/12px | 400 |
+| code-lg/md/sm | IBM Plex Mono | 15/13/11px | 500 |
 
-Prefer:
-- “Potential phishing indicators detected.”
-- “No match was found in the sources checked. This does not prove the URL is safe.”
-- “External threat check unavailable; showing local heuristic results only.”
-- “This is a ScamShield report, not an official police complaint.”
+IBM Plex Mono is used for all telemetry: URLs, tokens, audit log, UPI strings, hashes.
+Fonts loaded via Google Fonts `@import` in `base.css` — no CDN framework, no build step.
 
-Avoid:
-- “This person is a scammer.”
-- “Guaranteed safe.”
-- “AI proved this is fraud.”
-- “Police have been notified” unless a verified integration actually confirms this.
+## 5. CSS architecture (implemented)
 
-## 6. Forms and validation
-- Label every input.
-- Explain expected formats and why sensitive information should not be entered.
-- Preserve user input after validation errors when safe.
-- Provide clear, accessible error messages.
-- Confirm before destructive actions.
-- Do not request OTPs, passwords, UPI PINs or account recovery codes.
+```
+public/assets/css/
+├── tokens.css      ← all CSS custom properties
+├── base.css        ← reset, typography, focus ring, grid, utilities
+└── components.css  ← buttons, badges, cards, inputs, risk meter, findings table, etc.
+```
 
-## 7. Responsive and accessibility requirements
-- Support mobile, tablet and desktop layouts.
-- Use semantic headings, labels, landmarks and buttons.
-- Support keyboard navigation and visible focus.
-- Maintain readable contrast and scalable text.
-- Announce validation/status messages accessibly.
-- Do not rely only on red/green to communicate risk.
+## 6. Accessibility rules (implemented)
 
-## 8. Evidence and privacy UX
-- Display allowed file types and size limits before upload.
-- Warn users to avoid uploading unrelated identity documents or secrets.
-- Show upload progress and success/failure accurately.
-- Make who can view evidence clear.
-- Do not expose direct public file URLs.
-- Provide a deletion/retention explanation once retention policy is decided.
+- Risk level conveyed by **text label + shape icon + position** — never color alone.
+  Icons: ○ Low · ◇ Moderate · ▲ High · ⬡ Critical.
+- Focus ring: `2px solid #0A2391` with `2px` white offset — visible on every background.
+- All inputs have `<label>` or `aria-label`. Heading order is maintained per page.
+- Skip-to-main-content link in layout. All external links have `rel="noopener noreferrer"`.
 
-## 9. Initial page priorities
-1. Home and product explanation.
-2. URL analyzer.
-3. Message analyzer.
-4. Result detail.
-5. Authentication.
-6. User dashboard and analysis history.
-7. Incident submission and report tracking.
-8. Admin queue and report review.
+## 7. Layout (implemented)
 
-Build accessible, functional workflows before decorative animation.
+- Max canvas: 1200px. Desktop: 12-column grid. Mobile: single column below 900px.
+- Primary result split: 8-col investigation pane + 4-col sticky ledger.
+- Spacing: 4px/8px modular scale (`--space-xs` → `--space-xl`).
+- Corner radii: 2px (chips/tags) and 4px (panels/inputs) only.
+
+## 8. Implemented view structure
+
+```
+app/Views/
+├── layouts/main.php            ← warning strip, CSRF meta, sticky nav, flash messages, footer
+├── partials/
+│   ├── warning-strip.php       ← persistent non-dismissible safety banner
+│   ├── nav.php                 ← auth-aware: login/register ↔ username + logout + admin
+│   ├── footer.php              ← disclaimer, 1930 hotline, footer links
+│   ├── url-inspector-form.php  ← tabbed SMS/URL/UPI POST /analyze form
+│   ├── risk-meter.php          ← 4-tier geometric risk tier indicator
+│   ├── annotated-url.php       ← monospace URL anatomy token breakdown
+│   ├── findings-list.php       ← numbered findings + rule audit log table
+│   ├── next-steps.php          ← triage checklist, helplines, verified channels
+│   └── limitations-box.php     ← airgap proof + local-rules disclaimer
+├── pages/
+│   ├── home.php                ← hero inspector, RBI band, capability split, emergency steps
+│   └── analyzer.php            ← full analyzer form + active scam pattern registry table
+├── analysis/
+│   └── url_result.php          ← result page wired to UrlAnalysisService output
+├── auth/
+│   ├── register.php            ← CSRF-protected registration form
+│   └── login.php               ← CSRF-protected login form
+├── incidents/
+│   ├── index.php               ← user's incident list
+│   ├── create.php              ← incident creation form (CSRF protected)
+│   └── show.php                ← detail + evidence upload + status history
+└── admin/
+    ├── queue.php               ← all incidents with status filter tabs
+    ├── detail.php              ← admin review + status change form (CSRF protected)
+    └── audit.php               ← append-only audit log viewer
+```
+
+## 9. UX copy rules
+
+- "Potential indicators detected" — never "confirmed scam."
+- "No rules matched" ≠ safe — state explicitly: "This does not mean the link is safe."
+- Platform incident reference ≠ official police complaint — stated in every incident view.
+- 1930 and cybercrime.gov.in appear in every relevant context.
+
+## 10. Not yet implemented (planned)
+
+- Analysis history page (`/analyses`) — DB schema and repository exist; route not wired.
+- Pattern Registry page — nav link present but disabled.
+- Account settings / password change.
+- Pagination for incident list and admin queue.
+- Threat-intelligence adapter (see DECISION.md ADR-008 — unresolved).

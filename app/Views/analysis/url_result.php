@@ -155,13 +155,15 @@ $bannerMod = match($level) {
         aria-label="Post-analysis actions"
     >
         <div style="display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-sm);">
-            <!-- Log incident: TODO in Milestone 2 (no backend yet) -->
-            <button class="btn btn-primary" type="button" disabled
-                    aria-disabled="true"
-                    title="Incident logging coming in Milestone 2">
-                Log as Incident
-                <span class="t-code-sm" style="opacity:.6;">[TODO: Milestone 2]</span>
-            </button>
+            <?php
+            $incidentHref = '/incidents/create' . (!empty($analysisId) ? '?from_analysis=' . (int)$analysisId : '');
+            if (\App\Support\Session::isLoggedIn()): ?>
+                <a href="<?= htmlspecialchars($incidentHref, ENT_QUOTES, 'UTF-8') ?>" class="btn btn-primary">
+                    Log as Incident →
+                </a>
+            <?php else: ?>
+                <a href="/login" class="btn btn-primary">Sign in to Log as Incident</a>
+            <?php endif; ?>
 
             <!-- Copy summary — JS progressive enhancement -->
             <button class="btn btn-secondary js-only"

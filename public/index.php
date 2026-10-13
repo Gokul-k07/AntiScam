@@ -1,17 +1,7 @@
 <?php
 
-/**
- * ScamShield — front controller.
- *
- * All HTTP requests to the application pass through this file.
- * Located in public/ so that app/, config/, storage/, and .env
- * are never directly accessible over HTTP.
- */
-
 declare(strict_types=1);
 
-// ── Bootstrap ────────────────────────────────────────────────────────────────
-// app/ is one directory up from public/
 require_once dirname(__DIR__) . '/app/Support/Bootstrap.php';
 
 use App\Support\Bootstrap;
@@ -19,52 +9,79 @@ use App\Support\Router;
 use App\Controllers\HomeController;
 use App\Controllers\HealthController;
 use App\Controllers\AnalysisController;
+use App\Controllers\AuthController;
+use App\Controllers\IncidentController;
+use App\Controllers\AdminController;
 
 $config = Bootstrap::init();
 
-// ── Router ────────────────────────────────────────────────────────────────────
 $router = new Router();
 
-// Home
-$router->get('/', function (): void {
-    (new HomeController())->index();
+// ── Public ────────────────────────────────────────────────────────────────
+$router->get('/', fn() => (new HomeController())->index());
+$router->get('/health', fn() => (new HealthController())->index());
+
+// ── Analysis ──────────────────────────────────────────────────────────────
+$router->get('/analyze',  fn() => (new AnalysisController())->index());
+$router->post('/analyze', fn() => (new AnalysisController())->analyze());
+
+// ── Auth ──────────────────────────────────────────────────────────────────
+$router->get('/register',  fn() => (new AuthController())->showRegister());
+$router->post('/register', fn() => (new AuthController())->register());
+$router->get('/login',     fn() => (new AuthController())->showLogin());
+$router->post('/login',    fn() => (new AuthController())->login());
+$router->get('/logout',    fn() => (new AuthController())->logout());
+$router->post('/logout',   fn() => (new AuthController())->logout());
+
+// ── Incidents (auth required — enforced inside controller) ────────────────
+$router->get('/incidents',        fn() => (new IncidentController())->index());
+$router->get('/incidents/create', fn() => (new IncidentController())->showCreate());
+$router->post('/incidents/create',fn() => (new IncidentController())->create());
+
+// Dynamic incident routes: extract reference from URI
+$router->setDynamicHandler(function (string $method, string $path): bool {
+    // GET /incidents/{ref}
+    if ($method === 'GET' && preg_match('#^/incidents/([A-Z0-9\-]{5,20})$#', $path, $m)) {
+        (new IncidentController())->show($m[1]);
+        return true;
+    }
+    // POST /incidents/{ref}/evidence
+    if ($method === 'POST' && preg_match('#^/incidents/([A-Z0-9\-]{5,20})/evidence$#', $path, $m)) {
+        (new IncidentController())->uploadEvidence($m[1]);
+        return true;
+    }
+    // GET /evidence/{id}/download
+    if ($method === 'GET' && preg_match('#^/evidence/(\d+)/download$#', $path, $m)) {
+        (new IncidentController())->downloadEvidence((int)$m[1]);
+        return true;
+    }
+    // GET /admin/incidents/{ref}
+    if ($method === 'GET' && preg_match('#^/admin/incidents/([A-Z0-9\-]{5,20})$#', $path, $m)) {
+        (new AdminController())->detail($m[1]);
+        return true;
+    }
+    // POST /admin/incidents/{ref}/status
+    if ($method === 'POST' && preg_match('#^/admin/incidents/([A-Z0-9\-]{5,20})/status$#', $path, $m)) {
+        (new AdminController())->changeStatus($m[1]);
+        return true;
+    }
+    return false;
 });
 
-// Health check
-$router->get('/health', function (): void {
-    (new HealthController())->index();
-});
+// ── Admin (role check inside controller) ──────────────────────────────────
+$router->get('/admin/incidents', fn() => (new AdminController())->queue());
+$router->get('/admin/audit',     fn() => (new AdminController())->auditLog());
 
-// Analyzer form (GET)
-$router->get('/analyze', function (): void {
-    (new AnalysisController())->index();
-});
-
-// Run analysis (POST) — submits to /analyze
-$router->post('/analyze', function (): void {
-    (new AnalysisController())->analyze();
-});
-
-// 404 handler
+// ── 404 ───────────────────────────────────────────────────────────────────
 $router->setNotFound(function (): void {
     $title   = 'Page Not Found';
-    $content = '';
+    $viewsDir = dirname(__DIR__) . '/app/Views/';
     ob_start();
-    $viewFile = dirname(__DIR__) . '/app/Views/pages/not-found.php';
-    if (file_exists($viewFile)) {
-        include $viewFile;
-    }
-    $content = (string) ob_get_clean();
-
-    $layoutFile = dirname(__DIR__) . '/app/Views/layouts/main.php';
-    if (file_exists($layoutFile)) {
-        include $layoutFile;
-    } else {
-        echo '<h1>404 — Page Not Found</h1><p><a href="/">Home</a></p>';
-    }
+    include $viewsDir . 'pages/not-found.php';
+    $content = (string)ob_get_clean();
+    include $viewsDir . 'layouts/main.php';
 });
 
-// ── Dispatch ──────────────────────────────────────────────────────────────────
 $router->dispatch(
     $_SERVER['REQUEST_METHOD'] ?? 'GET',
     $_SERVER['REQUEST_URI']    ?? '/'

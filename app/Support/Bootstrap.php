@@ -44,6 +44,9 @@ class Bootstrap
         // 6. Register centralized error / exception handlers.
         ErrorHandler::register();
 
+        // 7. Start secure session.
+        Session::start($config);
+
         return $config;
     }
 }
