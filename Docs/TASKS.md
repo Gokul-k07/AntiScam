@@ -1,7 +1,7 @@
 # ScamShield — Task Board
 
-- **Status:** MVP backend + UI complete (v1.0), 2026-10-13
-- **Legend:** `[x]` complete and verified · `[ ]` not started · `[!]` blocked / needs decision
+- **Status:** MVP complete (v1.0), VirusTotal integration complete (v1.1) — 2026-10-14
+- **Legend:** `[x]` complete and verified · `[ ]` not started · `[!]` blocked or needs decision · `[~]` partially implemented
 
 ---
 
@@ -11,7 +11,7 @@
 - [x] Record PHP / MariaDB versions *(PHP 8.2.12, MariaDB 10.4.32, Apache 2.4.58)*
 - [x] Confirm repository root and Docs/ path
 - [x] .gitignore covers secrets, uploads, logs
-- [x] README with verified setup instructions
+- [x] README with setup instructions *(updated 2026-10-14)*
 - [x] Decide document-root strategy *(ADR-009: public/ via virtual host)*
 
 ## Milestone 1 — Application skeleton
@@ -25,7 +25,7 @@
 - [x] `database/schema.sql` — tables: `users`, `analyses`, `incidents`, `evidence_files`, `incident_status_history`, `audit_logs`
 - [x] PDO singleton with ERRMODE_EXCEPTION and emulated prepares disabled (`app/Support/Database.php`)
 - [x] Least-privilege DB user documented in `.env.example`
-- [ ] Schema applied to local MariaDB instance *(manual step — run `php database/setup.php` then `SOURCE schema.sql`)*
+- [ ] Schema applied to local MariaDB instance *(manual step — run `php database/setup.php` then import `schema.sql`)*
 
 ## Milestone 3 — Authentication and authorization
 - [x] `app/Support/Session.php` — secure session bootstrap (HttpOnly, SameSite=Lax, custom name)
@@ -43,19 +43,19 @@
 
 ## Milestone 4 — Rule-based URL and message analysis
 - [x] `app/Services/Analysis/UrlAnalysisService.php` — deterministic heuristic engine
-  - URL rules: HTTP (no TLS), raw IP host, PSB brand typosquat, utility keyword, suspicious TLD, harvest query param, APK delivery, hyphen stacking
-  - SMS rules: coercive urgency, PSB impersonation, KYC/credential harvest, embedded URL, DLT non-compliance, digital arrest, job scam
-  - UPI rules: PIN-to-receive trap, VPA brand impersonation, coercive urgency
+  - 8 URL rules: HTTP (no TLS), raw IP host, PSB brand typosquat, utility keyword, suspicious TLD, harvest query param, APK delivery, hyphen stacking
+  - 7 SMS rules: coercive urgency, PSB impersonation, KYC/credential harvest, embedded URL (50% recursive), DLT non-compliance, digital/courier arrest, job scam
+  - 3 UPI rules: PIN-to-receive reversal trap, VPA brand impersonation, coercive urgency
 - [x] Risk bands: low (0–24), moderate (25–54), high (55–84), critical (85–100)
 - [x] Every finding returns: trigger ID, tag, title, explanation, weight, severity, regulatory reference
 - [x] "No match" never declared safe — explicitly stated in limitations-box partial
 - [x] Server does NOT fetch submitted URLs (Rule §4.1 — airgap confirmed)
 - [x] `app/Repositories/AnalysisRepository.php` — persists results; input capped at 500 chars excerpt
 - [x] `app/Controllers/AnalysisController.php` — GET /analyze (form), POST /analyze (run + persist + render)
-- [x] Smoke tested: 5 cases verified (APK→critical/92, empty→low/0, SBI SMS→high/83, UPI trap→moderate/50, official SBI URL→low/0)
+- [x] Smoke tested: 5 cases verified (APK→critical/92, empty→low/0, SBI SMS→high/83, UPI trap→moderate/50, official SBI→low/0)
 - [x] Result page wired to real service output — all Stitch sample text replaced with dynamic data
 - [x] "Log as Incident" button on result page links to `/incidents/create?from_analysis={id}` when logged in
-- [ ] Analysis history page `/analyses` — DB and repository ready; route not yet wired
+- [ ] Analysis history page `/analyses` — DB and repository ready; route not wired
 
 ## Milestone 5 — Incident reports and evidence
 - [x] `app/Services/Incidents/IncidentService.php` — create, validateCreate, changeStatus, allowedTransitions, generateReference
@@ -65,7 +65,7 @@
 - [x] Status flow: submitted → under_review → info_needed ↔ under_review → closed
 - [x] `app/Services/Incidents/EvidenceService.php` — upload with allowlist (JPG/PNG/GIF/PDF/TXT/CSV), server-side MIME detection, random storage keys, 10 MB limit, path-traversal prevention, SHA-256 hash
 - [x] `app/Repositories/EvidenceRepository.php`
-- [x] Evidence stored via `STORAGE_EVIDENCE_PATH` env var (defaults to `storage/evidence/` if not set)
+- [x] Evidence stored via `STORAGE_EVIDENCE_PATH` env var
 - [x] Every download authorization-checked against incident ownership
 - [x] Incident views: `incidents/index.php`, `incidents/create.php`, `incidents/show.php`
 - [x] Cross-user access prevented: ownership checked server-side before every read/download
@@ -77,38 +77,44 @@
 - [x] Every admin route calls `AuthMiddleware::requireAdmin()` (server-side role check)
 - [x] Status changes require reason; history row written + audit entry
 - [x] Admin views: `admin/queue.php` (status filter), `admin/detail.php` (CSRF status change), `admin/audit.php`
-- [x] Audit log is append-only at application layer; no UPDATE/DELETE on `audit_logs`
-- [ ] Evidence viewer for admin (can use existing incident detail page; direct evidence list not separately wired for admin yet)
+- [x] Audit log is append-only at application layer
 
 ## Milestone 7 — Stitch UI conversion
-- [x] Stitch screens rebuilt as semantic PHP views (no Tailwind CDN, no inline styles, no Bootstrap)
+- [x] Stitch screens rebuilt as semantic PHP views (no Bootstrap CDN, no inline styles)
 - [x] `public/assets/css/tokens.css` — full design token CSS custom properties
 - [x] `public/assets/css/base.css` — reset, typography, focus ring, grid, utilities
 - [x] `public/assets/css/components.css` — all component styles
 - [x] All three Stitch screens converted and wired to real backend data
 - [x] Risk level conveyed by text + shape icon + position (accessibility)
-- [x] 39/39 PHP files pass `php -l`
+- [x] All PHP files pass `php -l` (syntax check)
 
-## Milestone 8 — Threat intelligence
-- [x] VirusTotal v3 API selected as provider — ADR-008 resolved (2026-10-14)
-- [x] `app/Services/Analysis/ThreatIntelProviderInterface.php` — interface contract
-- [x] `app/Services/Analysis/VirusTotalResult.php` — immutable value object (5 statuses: found, not_found, rate_limited, unavailable, not_configured)
-- [x] `app/Services/Analysis/VirusTotalProvider.php` — GET /api/v3/urls/{id}, parses last_analysis_stats, PHP stream_context (no curl dependency), no retry on 429, no URL fetch (SSRF §10 safe)
-- [x] `app/Services/Analysis/ReportCache.php` — flat-file SHA-256-keyed cache in storage/vt_cache/, configurable TTL
-- [x] VirusTotalProvider integrated in `app/Controllers/AnalysisController.php` (URL analyses only; SMS/UPI text never sent to VT)
-- [x] `app/Repositories/AnalysisRepository::create()` updated to accept $threatStatus, maps to analyses.threat_status ENUM
-- [x] VT reputation card in `app/Views/analysis/url_result.php` — shows engine counts as external evidence with mandatory epistemic caveat; hidden when not configured
-- [x] `tests/Unit/VirusTotalProviderTest.php` — 40/40 offline tests (value object, URL id, guard conditions, cache read/write/TTL/corrupt/expiry)
-- [ ] Integration test with live VT API key (requires VIRUSTOTAL_API_KEY in .env)
+## Milestone 8 — VirusTotal threat intelligence integration
+- [x] VirusTotal v3 Public API selected — ADR-008 resolved (2026-10-14)
+- [x] `app/Services/Analysis/ThreatIntelProviderInterface.php` — adapter contract
+- [x] `app/Services/Analysis/VirusTotalResult.php` — immutable value object, 5 statuses
+- [x] `app/Services/Analysis/VirusTotalProvider.php` — GET /api/v3/urls/{id}, PHP stream_context (no curl), no retry on 429, URL not fetched (SSRF §10 safe)
+- [x] `app/Services/Analysis/ReportCache.php` — flat-file SHA-256-keyed cache, storage/vt_cache/, configurable TTL
+- [x] `AnalysisController::analyze()` updated — VT lookup for URL type only; SMS/UPI never sent to VT
+- [x] `AnalysisRepository::create()` updated — accepts $threatStatus, maps to analyses.threat_status ENUM
+- [x] VT reputation card in `url_result.php` — engine counts as external evidence, mandatory epistemic caveat, hidden when not configured
+- [x] `tests/Unit/VirusTotalProviderTest.php` — 40/40 offline tests pass (value object, URL id generation, guard conditions, cache read/write/TTL/corrupt/expiry)
+- [ ] Integration test with live VT API key *(requires VIRUSTOTAL_API_KEY in .env)*
+- [ ] `.env` configured with `VIRUSTOTAL_API_KEY` *(manual step — user must obtain key and add to .env)*
+
+---
 
 ## Blockers / open decisions
-- [!] Anonymous analysis — currently persisted with `user_id = NULL`; decision on whether to allow unauthenticated analysis is pending
+
+- [!] Anonymous analysis — currently persisted with `user_id = NULL`; policy pending
 - [!] Evidence retention / deletion policy — not yet defined
-- [x] Threat-intelligence provider and terms — ADR-008 resolved: VirusTotal public API (2026-10-14)
+- [x] Threat-intelligence provider — ADR-008 resolved: VirusTotal v3 Public API
 - [x] Apache document-root — ADR-009 resolved: serve `public/` via virtual host
 - [x] PHP / MariaDB versions confirmed
 
+---
+
 ## Manual setup steps required before first browser test
+
 1. Create database and user:
    ```sql
    CREATE DATABASE scamshield CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -117,13 +123,17 @@
    FLUSH PRIVILEGES;
    ```
 2. Apply schema: `mysql -u scamshield_user -p scamshield < database/schema.sql`
-3. Copy `.env.example` to `.env` and fill in `DB_*` values and `STORAGE_EVIDENCE_PATH`
+3. Copy `.env.example` to `.env` and fill in `DB_*` values, `STORAGE_EVIDENCE_PATH`, and optionally `VIRUSTOTAL_API_KEY`
 4. Configure XAMPP virtual host to serve `C:\xampp\htdocs\AntiScam\public\` as document root
-5. Add `127.0.0.1 scamshield.local` to `C:\Windows\System32\drivers\etc\hosts` (run as Administrator)
+5. Add `127.0.0.1 scamshield.local` to `C:\Windows\System32\drivers\etc\hosts` (Administrator elevation required)
 6. Restart Apache
 
-## What was NOT tested (requires live DB)
+---
+
+## What was NOT tested (requires live DB or network)
+
 - PDO connection and all repository queries against MariaDB
-- File upload / download through the evidence service
+- File upload/download through the evidence service
 - Full HTTP request cycle (session, CSRF, redirect-after-post) in a browser
 - Admin role assignment (must be set directly in DB: `UPDATE users SET role='admin' WHERE email='...'`)
+- VirusTotal API integration with a real API key (offline tests pass; live endpoint untested)

@@ -1,9 +1,9 @@
 # ScamShield — Engineering and Safety Rules
 
-- **Status:** Initial baseline, v0.1
-- **Last reviewed:** 2026-10-12
+- **Status:** v1.1 — updated after full MVP implementation including VirusTotal integration
+- **Last reviewed:** 2026-10-14
 
-These rules are binding project constraints for human contributors and AI coding agents. If a task conflicts with these rules, explain the conflict and ask before proceeding.
+These rules are binding constraints for human contributors and AI coding agents. If a task conflicts with any rule, explain the conflict and ask before proceeding.
 
 ## 1. Truthfulness and evidence
 1. Never claim a feature is implemented, tested, secure, or deployed unless there is evidence.
@@ -18,84 +18,96 @@ These rules are binding project constraints for human contributors and AI coding
 3. Make small, coherent changes and explain affected files.
 4. Run relevant tests and report exact commands/results; if tests cannot run, say why.
 5. Do not commit or push without the user's instruction.
-6. Update `TASKS.md`, `MEMORY.md`, or `DECISION.md` only when the change is meaningful, not for every trivial edit.
+6. Update `TASKS.md`, `MEMORY.md`, or `DECISION.md` only when the change is meaningful.
 7. Keep documentation consistent with implemented behavior. Mark planned features as planned.
 
 ## 3. PHP and database security
-1. Use PDO prepared statements for user-controlled values.
-2. Never concatenate user input into SQL.
-3. Hash passwords with `password_hash()` and verify with `password_verify()`.
-4. Regenerate the session ID after authentication and privilege changes.
-5. Set session cookie flags appropriately; use `Secure` when HTTPS is in use.
-6. Protect state-changing requests with CSRF tokens.
-7. Enforce authorization server-side for every private object, not just by hiding UI controls.
-8. Validate input on the server; client-side validation is only a usability aid.
-9. Escape output for its context, especially HTML, attributes and URLs.
-10. Use least privilege for database accounts outside disposable local development.
-11. Keep credentials outside Git. `.env.example` must contain placeholders only.
-12. Do not expose stack traces, SQL errors, filesystem paths, tokens or secrets to users.
+1. Use PDO prepared statements for user-controlled values. Never concatenate user input into SQL.
+2. Hash passwords with `password_hash(PASSWORD_BCRYPT, ['cost'=>12])` and verify with `password_verify()`.
+3. Regenerate the session ID after authentication and privilege changes: `session_regenerate_id(true)`.
+4. Set session cookie flags appropriately (HttpOnly, SameSite=Lax).
+5. Protect state-changing requests with CSRF tokens — generated, stored in session, validated server-side.
+6. Enforce authorization server-side for every private object, not just by hiding UI controls.
+7. Validate input on the server; client-side validation is only a usability aid.
+8. Escape output for its context: `htmlspecialchars(ENT_QUOTES, 'UTF-8')` for HTML.
+9. Use least privilege for database accounts outside disposable local development.
+10. Keep credentials outside Git. `.env.example` must contain placeholders only.
+11. Do not expose stack traces, SQL errors, filesystem paths, tokens, or secrets to users.
 
 ## 4. URL-analysis safety
-1. Do not visit or fetch arbitrary user-submitted URLs from the PHP server by default.
-2. Parse submitted URLs as data; validate scheme and host and reject unsupported schemes.
-3. Avoid unsafe redirects and do not make the analyzer an open proxy or URL scanner.
-4. A URL not found in a threat feed is **unknown/not matched**, not confirmed safe.
-5. Treat feed results as source-specific and time-sensitive.
-6. Explain heuristic indicators and uncertainty in the UI.
+1. Do not visit or fetch arbitrary user-submitted URLs from the PHP server (SSRF risk).
+2. Parse submitted URLs as data via `parse_url()`; reject unsupported schemes.
+3. A URL not found in a threat feed is **unknown/not matched**, not confirmed safe.
+4. Zero detections in VirusTotal are not evidence of safety — always display the caveat.
+5. Treat feed results as source-specific and time-sensitive; show the last analysis date when available.
+6. Explain heuristic indicators and uncertainty in the UI — never say "confirmed malicious."
 7. Avoid logging complete URLs when query strings may contain personal tokens.
 
-## 5. Message-analysis safety
+## 5. VirusTotal integration rules
+1. `VirusTotalProvider` is the only VT client in the codebase — do NOT add a second one.
+2. VT lookups happen in `AnalysisController::analyze()`, after local heuristics, for URL type only.
+3. SMS/UPI text is **NEVER** sent to VirusTotal. This is a hard rule, not a suggestion.
+4. The API key is read from `$_ENV['VIRUSTOTAL_API_KEY']` only — never logged, never stored as a class property, never passed to views.
+5. The VT result is a `VirusTotalResult` value object — all error states are handled gracefully without breaking heuristic analysis.
+6. "Not found" (HTTP 404) and zero detections **must** carry a "not evidence of safety" caveat in every view.
+7. Rate limit (HTTP 429) returns `rateLimited()` immediately — no retry.
+8. Cache goes in `storage/vt_cache/` using `ReportCache`. Do not bypass the cache.
+9. Do not submit URLs for scanning (no POST to `https://www.virustotal.com/api/v3/urls`).
+10. The provider call uses a fixed, known endpoint only. It does not fetch the submitted URL itself.
+
+## 6. Message-analysis safety
 1. Treat the rule engine as heuristic, not as a genuine language model.
 2. Do not use a single keyword as definitive proof.
-3. Show which rules triggered and why.
-4. Bound input length and handle Unicode safely.
+3. Show which rules triggered and why; include regulatory/advisory references.
+4. Bound input length (4000 chars) and handle Unicode safely via `mbstring`.
 5. Never ask users to submit OTPs, passwords, PINs, recovery codes, or remote-access credentials.
-6. If external AI is introduced, document what content is sent to the provider, consent, retention, cost/limits and failure behavior first.
+6. If external AI is ever introduced, document what content is sent, consent, retention, cost/limits, and failure behavior first.
 
-## 6. Upload and evidence safety
-1. Use an allowlist of accepted formats and size limits.
-2. Do not trust filenames, extensions, browser MIME values or client-provided paths.
-3. Verify MIME type server-side and use random storage names.
-4. Store evidence outside the public document root where possible.
+## 7. Upload and evidence safety
+1. Use an allowlist of accepted formats: jpg/jpeg, png, gif, pdf, txt, csv. Reject everything else.
+2. Do not trust filenames, extensions, browser MIME values, or client-provided paths.
+3. Verify MIME type server-side via `fileinfo`; use random hex storage names generated by `bin2hex(random_bytes())`.
+4. Store evidence outside the public document root (`storage/evidence/`).
 5. Do not execute or render uploaded HTML/SVG/script content inline.
-6. Require authorization for each evidence download.
-7. Prevent path traversal and overwrite attacks.
+6. Require ownership authorization for each evidence download (`IncidentController::downloadEvidence`).
+7. Prevent path traversal: strip path components from original filename; storage key is server-generated.
 8. Redact sensitive evidence details from logs.
-9. Define retention and deletion behavior before public launch.
 
-## 7. Privacy and responsible product language
+## 8. Privacy and responsible product language
 1. Collect the minimum data needed for the chosen feature.
-2. Explain what is stored and why.
+2. Input excerpts stored in the DB are capped at 500 characters — full message bodies are not retained by default.
 3. Avoid public scammer lists or public exposure of unverified allegations in the MVP.
-4. Distinguish a ScamShield incident report from an official complaint.
-5. Provide verified official reporting guidance, but do not claim a report has been filed unless confirmation exists.
+4. Distinguish a ScamShield incident report from an official complaint in every incident view.
+5. Provide verified official reporting guidance (1930, cybercrime.gov.in), but do not claim a report has been filed.
 6. Do not guarantee prevention, detection, recovery of money, or law-enforcement action.
 
-## 8. AI-agent operating instructions
+## 9. AI-agent operating instructions
+
 Before coding:
 - Inspect the relevant files and repository state.
-- Identify assumptions and possible destructive operations.
+- Identify assumptions and possibly destructive operations.
 - Propose a small implementation plan.
 
 While coding:
-- Follow the existing structure and these rules.
+- Follow the existing structure from `Docs/ARCHITECTURE.md` and `.kiro/steering/structure.md`.
+- Reuse existing services/repositories — check before creating new classes.
 - Do not add dependencies without explaining why.
 - Do not put generated source code in `Docs/` unless it is documentation.
-- Do not add an external service before checking its current documentation and terms.
 
 After coding:
 - Run the most relevant tests or clearly state why they could not run.
 - Summarize files changed, behavior implemented, tests and remaining risks.
 - Recommend documentation updates only for meaningful changes.
 
-## 9. Research basis (re-check before release)
+## 10. Research basis (re-check before release)
 
 - OWASP SQL Injection Prevention: https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html
 - OWASP Session Management: https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html
 - OWASP Secure Code Review: https://cheatsheetseries.owasp.org/cheatsheets/Secure_Code_Review_Cheat_Sheet.html
 - PHP PDO prepared statements: https://www.php.net/manual/en/pdo.prepared-statements.php
 - PHP password hashing: https://www.php.net/manual/en/function.password-hash.php
-- OpenPhish feed information and terms: https://openphish.com/phishing_feeds.html and https://www.openphish.com/terms.html
+- VirusTotal API v3 URL report: https://docs.virustotal.com/reference/url-info
+- VirusTotal public vs premium API limits: https://docs.virustotal.com/reference/public-vs-premium-api
 - Official India cybercrime reporting: https://www.cybercrime.gov.in/
 
 These are baseline references, not a claim of compliance. Re-check the current documents when implementing the relevant feature.

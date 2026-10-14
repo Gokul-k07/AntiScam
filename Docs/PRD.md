@@ -1,193 +1,154 @@
 # ScamShield — Product Requirements Document (PRD)
 
-- **Status:** Initial baseline, v0.1
-- **Last reviewed:** 2026-10-12
-- **Project root:** `C:\xampp\htdocs\AntiScam\`
-- **Documentation root:** `C:\xampp\htdocs\AntiScam\Docs\`
-- **Implementation stack:** PHP 8+, MySQL Community Edition, HTML/CSS/JavaScript, Bootstrap, XAMPP, Git/GitHub, Antigravity
+- **Status:** v1.1 — updated after full MVP implementation
+- **Last reviewed:** 2026-10-14
 
 ## 1. Product summary
 
-ScamShield is a web-based digital-safety assistant that helps people assess suspicious URLs and messages, understand the indicators behind an assessment, organize evidence, and prepare for appropriate reporting. It is not a law-enforcement system and does not determine guilt.
+ScamShield is a locally hosted web-based digital-safety assistant. It helps users in India assess suspicious URLs, SMS/messages, and UPI payment requests by applying deterministic heuristic rules and — when configured — consulting VirusTotal's external reputation database. Users can create incident reports, upload evidence, and receive guidance toward official reporting channels.
 
-The first release is a locally hosted PHP/MySQL application. It will provide user-facing analysis and incident-management workflows before considering browser or mobile companions.
+ScamShield is not a law-enforcement system and does not determine whether a specific person or account is guilty of a crime.
+
+**Implementation stack:** PHP 8.2, MariaDB 10.4, Apache 2.4 (XAMPP), custom HTML/CSS/JS (no Bootstrap CDN), no Composer packages, Git/GitHub.
 
 ## 2. Problem
 
-People receive deceptive messages, phishing links, impersonation attempts, suspicious payment requests, and scam calls. They often lack a quick, understandable way to assess warning signs and preserve the information needed to report an incident.
+People receive deceptive messages, phishing links, impersonation attempts, suspicious UPI payment requests, and scam calls. They often lack a quick, understandable way to assess warning signs and preserve the information needed to report an incident through official channels.
 
 ## 3. Product goals
 
-1. Let a user submit a URL or text for an explainable preliminary risk assessment.
-2. Show the concrete indicators that contributed to the result and the limitations of the assessment.
-3. Let authenticated users create and manage incident reports and evidence metadata.
-4. Provide an admin review workflow for reports submitted to this platform.
-5. Maintain secure access controls, auditable status changes, and privacy-conscious data handling.
-6. Keep the initial implementation usable without paid AI APIs.
+1. Let a user submit a URL, SMS/message text, or UPI string and receive an explainable preliminary risk assessment.
+2. Show the concrete indicators that contributed to the result, along with regulatory references and limitations.
+3. Let authenticated users create and manage incident reports with private evidence.
+4. Provide an admin review workflow with audit-logged status changes.
+5. Guide users toward verified official reporting routes without claiming reports have been filed.
+6. Keep the system usable without paid AI APIs; external reputation checks are optional.
 
 ## 4. Non-goals for the initial release
 
-- Monitoring all activity on a phone or computer.
-- Reading private messages, call audio, WhatsApp content, or other applications automatically.
+- Monitoring activity on a user's phone or computer automatically.
+- Reading private messages, call audio, or other application data automatically.
 - Guaranteeing detection of all scams or phishing sites.
 - Claiming a person, phone number, URL, or UPI ID is criminal based solely on a heuristic score.
 - Replacing official cybercrime reporting portals, banks, or law enforcement.
-- Automatically submitting official complaints unless a supported, authorized integration is separately verified.
-- Training or hosting a large language model as a prerequisite for the MVP.
+- Automatic submission of official complaints (no authorized integration exists).
+- Training or hosting a large language model.
+- QR-image decoding (text input only for UPI in the MVP).
 
 ## 5. Users and roles
 
-### Visitor
-- Read the product explanation and safety guidance.
-- Submit a limited URL/message analysis if anonymous analysis is enabled by a later decision.
+| Role | Capabilities |
+|---|---|
+| **Visitor** | Read public pages, use the analyzer (anonymous analysis currently persists with user_id=NULL — final policy pending) |
+| **Registered user** | All of the above + create/manage own incident reports, upload evidence, view analysis history |
+| **Administrator** | All of the above + view all incidents, change status with a recorded reason, view audit log |
 
-### Registered user
-- Analyze URLs and messages.
-- Review previous analyses.
-- Create incident reports.
-- Upload permitted evidence files.
-- View and update their own report details where allowed.
-- Receive guidance to appropriate official reporting routes.
+## 6. Implemented functional requirements
 
-### Administrator / platform reviewer
-- View reports within assigned permissions.
-- Change report status with a recorded reason.
-- Review evidence metadata and incident details.
-- View audit history.
-- Cannot represent themselves as police or make legally conclusive determinations.
+### FR-01: URL analysis (implemented)
+- Accepts a URL string up to 4000 characters.
+- Parses via PHP's `parse_url()` — no outbound fetch of the target URL.
+- Applies 8 deterministic heuristic rules covering transport, host type, brand impersonation, TLD risk, query parameters, APK delivery, and domain structure.
+- Optionally queries VirusTotal v3 `GET /api/v3/urls/{id}` to retrieve an existing report.
+- Returns risk band (low/moderate/high/critical), score (0–100), findings with regulatory references, and — if VT is configured — engine counts as external reputation evidence.
+- Stores result in `analyses` table with `threat_status` reflecting the VT outcome.
+- VT results are clearly labelled as external evidence, not ScamShield's verdict.
+- A URL not found in VT is never declared safe.
 
-## 6. MVP functional requirements
+### FR-02: SMS / message text analysis (implemented)
+- Accepts pasted text up to 4000 characters.
+- Applies 7 deterministic rules: coercive urgency, PSB brand impersonation, KYC/credential harvest demand, embedded URL (analysed recursively at 50% weight), DLT non-compliance (mobile sender), digital/courier arrest patterns, job-scam patterns.
+- SMS text is never sent to VirusTotal or any external API.
+- Returns matched indicators, risk band, and safe next steps.
 
-### FR-01: URL analysis
-- Accept a URL string.
-- Normalize safely for analysis without silently changing its meaning.
-- Validate parsing and supported schemes; reject malformed input.
-- Extract explainable indicators such as suspicious URL structure, misleading host/path patterns, IP-literal hosts, punycode/IDN indicators where detectable, unusual ports, and suspicious terms.
-- Optionally check a configured threat-intelligence source when the source is available and its use is permitted.
-- Return a risk category, score or band, indicators, recommendations, analysis timestamp, and source/check status.
-- Never fetch arbitrary submitted URLs from the server in the MVP. This avoids turning the analyzer into an SSRF or network-scanning service.
+### FR-03: UPI ID / payment string analysis (implemented)
+- Accepts UPI VPAs, payment strings, and message text relating to UPI.
+- Applies 3 rules: PIN-to-receive reversal trap, VPA brand impersonation, coercive urgency.
+- Does not attempt to decode QR images (text input only).
+- Does not verify that a VPA is registered with NPCI — heuristic match only.
+- UPI text is never sent to VirusTotal or any external API.
 
-### FR-02: Message analysis
-- Accept pasted text such as SMS, email, or chat content.
-- Detect rule-based indicators: urgency/threats, requests for OTP/password/PIN, payment demands, impersonation language, suspicious links, APK installation requests, and requests to move to unusual channels.
-- Return matched indicators and safe next steps.
-- Do not claim that keywords alone prove fraud.
+### FR-04: Accounts and sessions (implemented)
+- Registration with email/password; `password_hash(PASSWORD_BCRYPT, cost:12)`.
+- Login with session regeneration; secure session cookies (HttpOnly, SameSite=Lax, custom name).
+- CSRF tokens on all state-changing forms, validated server-side.
+- Server-side authorization on every private resource.
+- Roles: `user` (default) and `admin` (set directly in DB).
 
-### FR-03: Risk assessment
-- Use documented rules and weights stored in code/configuration.
-- Keep each triggered rule, weight, and explanation available for the result.
-- Bound and normalize scores to a defined range.
-- Use provisional Low / Medium / High bands until validation data supports better calibration.
-- Distinguish heuristic signals from confirmed threat-intelligence matches.
+### FR-05: Incident reports (implemented)
+- Incident types: phishing_url, phishing_sms, upi_fraud, impersonation, digital_arrest, job_scam, investment_scam, other.
+- Fields: incident_type, incident_at (optional past date), description (20–5000 chars), channel (scammer contact), optional link to a prior analysis.
+- Public reference format: `SS-YYYY-XXXXXX`.
+- Status flow: submitted → under_review → info_needed ↔ under_review → closed.
+- Every view states explicitly: "This is a ScamShield incident report, not an official police complaint."
 
-### FR-04: Accounts and sessions
-- Register, log in, log out, and manage sessions securely.
-- Store passwords using PHP's password hashing APIs.
-- Use prepared statements for database operations.
-- Enforce authorization server-side on every private resource.
-- Protect state-changing forms against CSRF.
+### FR-06: Evidence (implemented)
+- Allowed types: jpg/jpeg, png, gif, pdf, txt, csv.
+- Maximum file size: 10 MB.
+- Server-side MIME detection via PHP `fileinfo` extension.
+- Random storage key (hex-encoded random bytes); original filename stored for display only.
+- Files stored at `STORAGE_EVIDENCE_PATH` outside the web root.
+- SHA-256 hash of each file stored in the database.
+- Every download is authorization-checked against incident ownership.
+- No execution or inline rendering of uploaded content.
 
-### FR-05: Incident reports
-- Capture incident type, approximate time, narrative, contact/channel details the user chooses to provide, and transaction details only when necessary.
-- Generate a reference ID.
-- Support status tracking, for example: Submitted, Under Review, More Information Needed, Closed.
-- Make clear that this is a report inside ScamShield, not an official police complaint.
+### FR-07: Admin review and audit (implemented)
+- Admin routes protected by `AuthMiddleware::requireAdmin()` (server-side role check).
+- Status changes require an explicit reason; history row written and audit entry created.
+- `audit_logs` table is append-only at application level.
+- Audit log viewer at `/admin/audit`.
 
-### FR-06: Evidence
-- Allow a small, explicitly permitted set of evidence types.
-- Validate size, extension, MIME type and file signature where feasible.
-- Generate server-side random filenames.
-- Store uploaded files outside the public web root when possible.
-- Require authorization to download evidence.
-- Never execute uploaded content.
-- Record metadata and access events without logging sensitive file contents.
+### FR-08: Safety guidance (implemented)
+- "No rules matched" is never described as "safe."
+- Limitations box shown on every analysis result page.
+- 1930 (national cybercrime helpline) and cybercrime.gov.in appear in every relevant context.
+- Every incident view carries the "not an official complaint" disclaimer.
 
-### FR-07: Admin review and audit
-- Restrict admin functionality by server-side role checks.
-- Record meaningful report status changes and privileged actions.
-- Keep audit records append-only at application level; protect them from ordinary user modification.
-- Avoid collecting unnecessary personal data.
+## 7. Open decisions (not yet resolved)
 
-### FR-08: Safety guidance
-- Explain that risk results are estimates.
-- For suspected ongoing financial fraud in India, direct users to verified official reporting channels and emergency guidance.
-- Tell users not to share OTPs, passwords, UPI PINs, or remote-access codes with the platform.
+| Decision | Impact |
+|---|---|
+| Anonymous analysis policy | Whether unauthenticated analyses are retained with user_id=NULL |
+| Evidence retention/deletion policy | How long evidence files and incident records are kept |
+| Analysis history page `/analyses` | DB and repository ready; route not wired |
+| Account settings / password change | Not yet implemented |
 
-## 7. Non-functional requirements
+## 8. Non-functional requirements (verified)
 
-- **Security:** follow current secure coding guidance; validate inputs and encode output.
-- **Privacy:** data minimization, clear retention policy, restricted evidence access.
-- **Reliability:** predictable errors; no raw stack traces or credentials shown to users.
-- **Explainability:** every risk result should show the reason for its signals.
-- **Maintainability:** separate request handling, domain logic, persistence, and templates.
-- **Accessibility:** semantic HTML, keyboard operation, visible focus, understandable error messages.
-- **Performance:** local analysis should be responsive for ordinary-sized inputs; impose input and upload limits.
-- **Portability:** run on the installed XAMPP/PHP/MySQL setup without requiring paid services.
-
-## 8. Success criteria / acceptance tests
-
-1. Valid and invalid URL inputs are handled safely and deterministically.
-2. Message-analysis examples trigger the expected rules and explain each match.
-3. The same input and rules version produce the same deterministic score.
-4. Unknown URLs are not automatically declared safe.
-5. A user cannot view or download another user's private report/evidence by changing an ID.
-6. SQL injection payloads do not bypass authentication or alter queries.
-7. CSRF attempts on state-changing endpoints are rejected.
-8. Upload tests reject disallowed extensions, oversized files, MIME mismatches, and executable content.
-9. Admin-only endpoints reject ordinary users.
-10. Status changes produce an audit entry.
-11. The interface distinguishes platform case tracking from official reporting.
-12. Tests and known limitations are documented before a release is called complete.
+- **Security:** PDO prepared statements, bcrypt passwords, CSRF, session security, server-side authorization, output escaping, secure uploads. See `Docs/RULES.md`.
+- **Privacy:** Input excerpts capped at 500 chars in DB; full message bodies not retained by default; evidence access controlled.
+- **Reliability:** All VT errors handled as value objects; heuristic analysis always runs regardless of VT availability.
+- **Explainability:** Every finding shows trigger ID, tag, title, body, weight, severity, and regulatory/advisory reference.
+- **Maintainability:** Custom MVC with clear separation; no framework lock-in.
+- **Accessibility:** Semantic HTML, keyboard-navigable, risk level conveyed by text+shape+position (not color alone), visible focus ring.
 
 ## 9. Roadmap
 
-### MVP
-- PHP application skeleton and configuration
-- Database schema and migrations/setup script
+### Completed (MVP — 2026-10-14)
+- Repository, environment, configuration, document-root strategy
+- Database schema and setup script
 - Authentication and role authorization
-- Rule-based URL and message analysis
-- Analysis history
-- Incident reports and secure evidence handling
-- Admin review dashboard and audit trail
-- Automated/manual security tests
+- Rule-based URL, SMS, and UPI analysis with explainable findings
+- VirusTotal v3 external reputation integration (optional, configurable)
+- Incident reports, evidence upload/download, status tracking
+- Admin review dashboard and append-only audit trail
+- Stitch-designed UI converted to semantic PHP views
+- 45/45 automated offline tests pass
 
-### Later, only after the MVP is reliable
-- Verified threat-intelligence integration
-- Optional AI text analysis behind a provider interface
-- Email notifications with consent and secure configuration
+### Planned (post-MVP)
+- Analysis history page (`/analyses`) — repository ready, route not wired
+- Account settings / password change
+- Pagination for incident list and admin queue
+- Integration test with live VirusTotal API key
+- Additional threat-intelligence providers (URLhaus, Google Safe Browsing) — currently unimplemented
 - REST API
 - Browser extension and Android companion
-- Carefully evaluated hosting and deployment
+- Carefully evaluated public hosting
 
 ## 10. Key risks
 
 - False positives and false negatives in heuristic detection.
-- Threat feeds may have coverage, licensing, freshness, or availability limits.
-- Sensitive incident reports and evidence may expose victims to additional harm if access controls fail.
-- Server-side URL fetching can introduce SSRF and must not be added casually.
-- Public hosting of a student prototype may create privacy and abuse risks.
-- AI output can be inaccurate and must not override deterministic evidence or be presented as proof.
-
-## 11. Open decisions
-
-- Should URL/message analysis require an account, or permit rate-limited anonymous use?
-- Which exact file types and maximum sizes should evidence uploads support?
-- What data-retention period is appropriate for analyses, reports, and evidence?
-- Which threat-intelligence source and terms are suitable for a student project?
-- What PHP version and MySQL/MariaDB versions are installed in XAMPP?
-- Will the MVP run only locally, or will it later be deployed publicly?
-
-## External research references
-
-The following public sources informed the security and reporting requirements. These are design references, not proof that the application is compliant or secure.
-
-- OWASP SQL Injection Prevention Cheat Sheet: https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html — use parameterized queries and least privilege.
-- OWASP Session Management Cheat Sheet: https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html — protect session identifiers and configure cookie/session behavior carefully.
-- OWASP Secure Code Review Cheat Sheet: https://cheatsheetseries.owasp.org/cheatsheets/Secure_Code_Review_Cheat_Sheet.html — server-side validation, contextual output encoding, upload checks, and safe error messages.
-- PHP PDO prepared statements: https://www.php.net/manual/en/pdo.prepared-statements.php — bind user values rather than concatenating them into SQL.
-- PHP `password_hash`: https://www.php.net/manual/en/function.password-hash.php — use the platform's password hashing API.
-- Indian National Cyber Crime Reporting Portal, Report Suspect: https://www.cybercrime.gov.in/Webform/cyber_suspect.aspx — official suspect-reporting route for supported identifiers and evidence.
-- Indian National Cyber Crime Reporting Portal: https://www.cybercrime.gov.in/ — official reporting guidance; current portal guidance identifies 1930 for immediate reporting of financial cyber fraud.
-- OpenPhish feeds: https://openphish.com/phishing_feeds.html and terms: https://www.openphish.com/terms.html — evaluate current feed access and terms before integration. The community feed is described as limited and subject to terms; do not assume unrestricted redistribution or use in a public service.
-
-Review these sources again before deployment because provider terms and official guidance can change.
+- VirusTotal public API quota (500/day, 4/min) may be reached under heavy use.
+- VT may not have a report for a freshly registered phishing domain.
+- Sensitive incident reports may expose victims to additional harm if access controls fail.
+- Public hosting of a student prototype creates privacy and abuse risks; not yet deployed publicly.

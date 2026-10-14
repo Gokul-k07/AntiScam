@@ -117,10 +117,20 @@ app/Views/
 - Platform incident reference ≠ official police complaint — stated in every incident view.
 - 1930 and cybercrime.gov.in appear in every relevant context.
 
-## 10. Not yet implemented (planned)
+## 10. VirusTotal reputation card (implemented — Milestone 8)
+
+When `THREAT_INTEL_PROVIDER=virustotal` is configured and the input type is `url`, a "VirusTotal Engine Report" section appears below the main 8/4 grid on the result page.
+
+- Displays: malicious, suspicious, harmless, undetected, timeout engine counts; total engines; last analysis date.
+- A "cached" badge appears when the result was served from `storage/vt_cache/` rather than a live API call.
+- Mandatory epistemic caveat is shown in every state: engine counts are external evidence, not ScamShield's verdict; zero detections ≠ safe; ScamShield did not visit the URL.
+- Handled states: `found` (with counts), `not_found` (absence caveat), `rate_limited` (quota message), `unavailable` (service message).
+- Card is hidden entirely when VT is not configured (`STATUS_NOT_CONFIGURED`).
+- SMS and UPI result pages never show a VT card — those input types are never sent to VT.
+
+## 11. Not yet implemented (planned)
 
 - Analysis history page (`/analyses`) — DB schema and repository exist; route not wired.
 - Pattern Registry page — nav link present but disabled.
 - Account settings / password change.
 - Pagination for incident list and admin queue.
-- Threat-intelligence adapter (see DECISION.md ADR-008 — unresolved).
