@@ -72,8 +72,9 @@ $bannerMod = match($level) {
                 /**
                  * Annotated URL block — uses $result['url_tokens'].
                  * If no tokens (SMS input) shows raw payload.
+                 * __DIR__ = app/Views/analysis  → dirname(__DIR__) = app/Views
                  */
-                include dirname(__DIR__) . '/../partials/annotated-url.php';
+                include dirname(__DIR__) . '/partials/annotated-url.php';
                 ?>
             </div>
         </div>
@@ -109,7 +110,7 @@ $bannerMod = match($level) {
 
                 <!-- Risk meter ────────────────────────────────────── -->
                 <div style="padding:var(--space-md) var(--space-lg);">
-                    <?php include dirname(__DIR__) . '/../partials/risk-meter.php'; ?>
+                    <?php include dirname(__DIR__) . '/partials/risk-meter.php'; ?>
                 </div>
 
                 <!-- Plain-language summary ──────────────────────── -->
@@ -130,7 +131,7 @@ $bannerMod = match($level) {
             </div><!-- /.verdict-banner -->
 
             <!-- FINDINGS LIST ──────────────────────────────────────── -->
-            <?php include dirname(__DIR__) . '/../partials/findings-list.php'; ?>
+            <?php include dirname(__DIR__) . '/partials/findings-list.php'; ?>
 
         </section><!-- /.col-8 -->
 
@@ -138,16 +139,129 @@ $bannerMod = match($level) {
         <aside class="col-4 sticky-aside" aria-label="Next steps and limitations">
 
             <!-- NEXT STEPS ─────────────────────────────────────────── -->
-            <?php include dirname(__DIR__) . '/../partials/next-steps.php'; ?>
+            <?php include dirname(__DIR__) . '/partials/next-steps.php'; ?>
 
             <!-- LIMITATIONS BOX ────────────────────────────────────── -->
             <div style="margin-top:var(--space-md);">
-                <?php include dirname(__DIR__) . '/../partials/limitations-box.php'; ?>
+                <?php include dirname(__DIR__) . '/partials/limitations-box.php'; ?>
             </div>
 
         </aside><!-- /.col-4 -->
 
     </div><!-- /.grid-12 -->
+
+    <!-- VIRUSTOTAL EXTERNAL REPUTATION ─────────────────────────────────── -->
+    <?php
+    /**
+     * VirusTotal reputation card.
+     *
+     * $vtResult is a VirusTotalResult value object passed from AnalysisController.
+     * Shown only when the provider is configured (not STATUS_NOT_CONFIGURED).
+     *
+     * EPISTEMIC rules (RULES.md §16 + product.md):
+     *  - Engine counts are external evidence, not a definitive verdict.
+     *  - "Not found" is not evidence of safety.
+     *  - Zero detections are not evidence of safety.
+     *  - API key is never present in this view.
+     */
+    if (isset($vtResult) && $vtResult instanceof \App\Services\Analysis\VirusTotalResult
+        && $vtResult->status !== \App\Services\Analysis\VirusTotalResult::STATUS_NOT_CONFIGURED):
+    ?>
+    <section
+        aria-labelledby="vt-heading"
+        style="margin-top:var(--space-md);background:var(--surface-container-low);border:var(--border-hairline);padding:var(--space-md) var(--space-lg);"
+    >
+        <div style="display:flex;align-items:center;gap:var(--space-sm);margin-bottom:var(--space-sm);">
+            <span class="t-code-sm" style="text-transform:uppercase;letter-spacing:.06em;color:var(--on-surface-variant);">External Reputation</span>
+            <span class="badge badge-neutral">VirusTotal</span>
+            <?php if ($vtResult->fromCache): ?>
+                <span class="badge badge-neutral" title="Served from local cache — no new API call was made">cached</span>
+            <?php endif; ?>
+        </div>
+
+        <h2 id="vt-heading" class="t-title-md" style="margin:0 0 var(--space-xs);">
+            VirusTotal Engine Report
+        </h2>
+
+        <?php if ($vtResult->status === \App\Services\Analysis\VirusTotalResult::STATUS_FOUND): ?>
+            <?php
+            $vtMalicious  = $vtResult->malicious  ?? 0;
+            $vtSuspicious = $vtResult->suspicious ?? 0;
+            $vtHarmless   = $vtResult->harmless   ?? 0;
+            $vtUndetected = $vtResult->undetected ?? 0;
+            $vtTimeout    = $vtResult->timeout    ?? 0;
+            $vtTotal      = $vtResult->totalEngines ?? 0;
+            $vtFlagged    = $vtMalicious + $vtSuspicious;
+            ?>
+
+            <!-- Engine count summary chips -->
+            <div style="display:flex;flex-wrap:wrap;gap:var(--space-sm);margin-bottom:var(--space-sm);">
+                <span class="badge <?= $vtMalicious > 0 ? 'badge-danger' : 'badge-neutral' ?>">
+                    Malicious: <strong><?= $vtMalicious ?></strong>
+                </span>
+                <span class="badge <?= $vtSuspicious > 0 ? 'badge-alert' : 'badge-neutral' ?>">
+                    Suspicious: <strong><?= $vtSuspicious ?></strong>
+                </span>
+                <span class="badge badge-neutral">Harmless: <strong><?= $vtHarmless ?></strong></span>
+                <span class="badge badge-neutral">Undetected: <strong><?= $vtUndetected ?></strong></span>
+                <?php if ($vtTimeout > 0): ?>
+                    <span class="badge badge-neutral">Timed out: <strong><?= $vtTimeout ?></strong></span>
+                <?php endif; ?>
+                <span class="badge badge-neutral">Total engines: <strong><?= $vtTotal ?></strong></span>
+            </div>
+
+            <?php if ($vtResult->lastAnalysisDate !== null): ?>
+                <p class="t-body-sm" style="color:var(--on-surface-variant);margin:0 0 var(--space-sm);">
+                    Last analysis: <?= htmlspecialchars(date('d M Y', $vtResult->lastAnalysisDate), ENT_QUOTES, 'UTF-8') ?>
+                </p>
+            <?php endif; ?>
+
+            <!-- Mandatory epistemic caveat (RULES.md §16) -->
+            <div
+                role="note"
+                style="background:var(--surface-container);border-left:3px solid var(--outline-variant);padding:var(--space-sm) var(--space-md);font-size:.85rem;color:var(--on-surface-variant);"
+            >
+                <strong>How to read this:</strong>
+                These engine counts are one external data source.
+                <?php if ($vtFlagged === 0): ?>
+                Zero detections do <em>not</em> mean the URL is safe —
+                newly registered phishing domains may not yet appear in engine databases.
+                <?php else: ?>
+                <?= (int)$vtFlagged ?> engine<?= $vtFlagged === 1 ? '' : 's' ?> flagged this URL.
+                This corroborates the local heuristic findings but is not an independent legal determination.
+                <?php endif; ?>
+                ScamShield did not visit or load this URL at any point.
+            </div>
+
+        <?php elseif ($vtResult->status === \App\Services\Analysis\VirusTotalResult::STATUS_NOT_FOUND): ?>
+            <p class="t-body-sm" style="margin:0 0 var(--space-xs);">
+                No VirusTotal report found for this URL.
+            </p>
+            <div
+                role="note"
+                style="background:var(--surface-container);border-left:3px solid var(--outline-variant);padding:var(--space-sm) var(--space-md);font-size:.85rem;color:var(--on-surface-variant);"
+            >
+                <strong>Important:</strong> The absence of a VirusTotal report is <em>not</em> evidence of
+                safety. Freshly registered phishing domains are frequently absent from reputation databases.
+                Rely on the local heuristic findings above.
+            </div>
+
+        <?php elseif ($vtResult->status === \App\Services\Analysis\VirusTotalResult::STATUS_RATE_LIMITED): ?>
+            <p class="t-body-sm" style="color:var(--on-surface-variant);margin:0;">
+                VirusTotal daily or per-minute quota reached — external reputation check skipped.
+                Local heuristic analysis is unaffected.
+            </p>
+
+        <?php else: ?>
+            <!-- unavailable -->
+            <p class="t-body-sm" style="color:var(--on-surface-variant);margin:0;">
+                External reputation check temporarily unavailable.
+                Local heuristic analysis is unaffected.
+            </p>
+        <?php endif; ?>
+
+    </section>
+    <?php endif; ?>
 
     <!-- BOTTOM ACTION BAR ───────────────────────────────────────────── -->
     <section

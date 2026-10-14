@@ -50,7 +50,7 @@ $formError   = $formError   ?? null;
         <?php endif; ?>
 
         <!-- The tabbed inspector form partial -->
-        <?php include dirname(__DIR__) . '/../partials/url-inspector-form.php'; ?>
+        <?php include dirname(__DIR__) . '/partials/url-inspector-form.php'; ?>
 
         <!-- Transparency guarantee strip -->
         <div class="info-strip" style="margin-top:var(--space-md);">

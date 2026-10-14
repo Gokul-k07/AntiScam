@@ -1,21 +1,35 @@
 # ScamShield — public/.htaccess
-# Routes all requests through index.php (front controller pattern).
-# Requires mod_rewrite (enabled by default in XAMPP).
+# Requires: mod_rewrite (loaded in httpd.conf), AllowOverride All on this directory.
+#
+# Works under BOTH access patterns without modification:
+#   (a) vhost root:  http://scamshield.local/      (DocumentRoot = AntiScam/public)
+#   (b) subfolder:   http://localhost/AntiScam/public/  (DocumentRoot = htdocs)
+#
+# No RewriteBase is set. The rule target "index.php" is relative, so Apache
+# resolves it to this directory's index.php in both cases.
+# The Router reads SCRIPT_NAME to strip the subfolder prefix itself.
 
 Options -Indexes
 
-# Block direct access to sensitive files
-<FilesMatch "^\.env|^\.git">
+# ── Block dotfiles and sensitive path patterns ─────────────────────────────
+<FilesMatch "^\.">
     Require all denied
 </FilesMatch>
 
-# Enable URL rewriting
-RewriteEngine On
+# ── URL rewriting ──────────────────────────────────────────────────────────
+<IfModule mod_rewrite.c>
+    RewriteEngine On
 
-# If the request is for an existing file or directory, serve it directly.
-# (Handles public/assets/ etc.)
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
+    # Serve existing static files and directories directly (assets, etc.)
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
 
-# Otherwise route through the front controller.
-RewriteRule ^ index.php [QSA,L]
+    # Route everything else through the front controller.
+    # Relative target (no leading /) works correctly under any DocumentRoot.
+    RewriteRule ^ index.php [QSA,L]
+</IfModule>
+
+# ── Suppress PHP errors from reaching users ────────────────────────────────
+<IfModule mod_php.c>
+    php_flag display_errors Off
+</IfModule>

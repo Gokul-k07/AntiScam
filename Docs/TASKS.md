@@ -90,14 +90,21 @@
 - [x] 39/39 PHP files pass `php -l`
 
 ## Milestone 8 — Threat intelligence
-- [!] Provider not yet selected — see DECISION.md ADR-008 (unresolved)
-- [ ] ThreatIntelProvider interface
-- [ ] Adapter returning normalized: match / no_match / unavailable / not_checked
+- [x] VirusTotal v3 API selected as provider — ADR-008 resolved (2026-10-14)
+- [x] `app/Services/Analysis/ThreatIntelProviderInterface.php` — interface contract
+- [x] `app/Services/Analysis/VirusTotalResult.php` — immutable value object (5 statuses: found, not_found, rate_limited, unavailable, not_configured)
+- [x] `app/Services/Analysis/VirusTotalProvider.php` — GET /api/v3/urls/{id}, parses last_analysis_stats, PHP stream_context (no curl dependency), no retry on 429, no URL fetch (SSRF §10 safe)
+- [x] `app/Services/Analysis/ReportCache.php` — flat-file SHA-256-keyed cache in storage/vt_cache/, configurable TTL
+- [x] VirusTotalProvider integrated in `app/Controllers/AnalysisController.php` (URL analyses only; SMS/UPI text never sent to VT)
+- [x] `app/Repositories/AnalysisRepository::create()` updated to accept $threatStatus, maps to analyses.threat_status ENUM
+- [x] VT reputation card in `app/Views/analysis/url_result.php` — shows engine counts as external evidence with mandatory epistemic caveat; hidden when not configured
+- [x] `tests/Unit/VirusTotalProviderTest.php` — 40/40 offline tests (value object, URL id, guard conditions, cache read/write/TTL/corrupt/expiry)
+- [ ] Integration test with live VT API key (requires VIRUSTOTAL_API_KEY in .env)
 
 ## Blockers / open decisions
 - [!] Anonymous analysis — currently persisted with `user_id = NULL`; decision on whether to allow unauthenticated analysis is pending
 - [!] Evidence retention / deletion policy — not yet defined
-- [!] Threat-intelligence provider and terms — ADR-008 unresolved
+- [x] Threat-intelligence provider and terms — ADR-008 resolved: VirusTotal public API (2026-10-14)
 - [x] Apache document-root — ADR-009 resolved: serve `public/` via virtual host
 - [x] PHP / MariaDB versions confirmed
 

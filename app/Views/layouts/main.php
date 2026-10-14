@@ -1,6 +1,8 @@
 <?php
 use App\Support\Csrf;
 use App\Support\Session;
+use App\Support\Router;
+$base = Router::basePath(); // '' for vhost root, '/AntiScam/public' for subfolder
 ?><!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,9 +15,9 @@ use App\Support\Session;
 
     <title><?= htmlspecialchars($title ?? 'ScamShield', ENT_QUOTES|ENT_SUBSTITUTE, 'UTF-8') ?> — ScamShield</title>
 
-    <link rel="stylesheet" href="/assets/css/tokens.css">
-    <link rel="stylesheet" href="/assets/css/base.css">
-    <link rel="stylesheet" href="/assets/css/components.css">
+    <link rel="stylesheet" href="<?= $base ?>/assets/css/tokens.css">
+    <link rel="stylesheet" href="<?= $base ?>/assets/css/base.css">
+    <link rel="stylesheet" href="<?= $base ?>/assets/css/components.css">
 
     <?php if (!empty($pageCss)): ?>
         <?php foreach ((array)$pageCss as $cssFile): ?>

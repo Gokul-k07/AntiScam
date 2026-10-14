@@ -7,6 +7,7 @@ namespace App\Controllers;
 use App\Middleware\AuthMiddleware;
 use App\Services\Incidents\IncidentService;
 use App\Repositories\IncidentRepository;
+use App\Repositories\EvidenceRepository;
 use App\Repositories\AuditRepository;
 use App\Support\Session;
 use App\Support\Csrf;
@@ -19,13 +20,15 @@ class AdminController
 {
     private IncidentService    $service;
     private IncidentRepository $repo;
+    private EvidenceRepository $evidenceRepo;
     private AuditRepository    $audit;
 
     public function __construct()
     {
-        $this->service = new IncidentService();
-        $this->repo    = new IncidentRepository();
-        $this->audit   = new AuditRepository();
+        $this->service      = new IncidentService();
+        $this->repo         = new IncidentRepository();
+        $this->evidenceRepo = new EvidenceRepository();
+        $this->audit        = new AuditRepository();
     }
 
     // ── Queue (all reports) ───────────────────────────────────────────────
@@ -62,12 +65,14 @@ class AdminController
         }
 
         $history   = $this->repo->getHistory((int)$incident['id']);
+        $evidence  = $this->evidenceRepo->listForIncident((int)$incident['id']);
         $success   = Session::getFlash('success');
         $error     = Session::getFlash('error');
 
         $this->render('admin/detail', 'Incident ' . htmlspecialchars($reference, ENT_QUOTES, 'UTF-8'), [
             'incident'           => $incident,
             'history'            => $history,
+            'evidence'           => $evidence,
             'success'            => $success,
             'error'              => $error,
             'allowedTransitions' => $this->service->allowedTransitions($incident['status']),

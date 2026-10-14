@@ -91,8 +91,8 @@ Option A implemented: Apache virtual host at `scamshield.local` serves `AntiScam
 - Anonymous analysis vs login-required analysis.
 - Evidence file allowlist and size limits.
 - Data retention and deletion policy.
-- Threat-intelligence provider and terms (ADR-008 pending).
 
 ## Change log
 - 2026-10-12: Created initial documentation baseline. No application implementation verified.
 - 2026-10-12: Phase 1 complete — skeleton implemented and verified. See ADR-009.
+- 2026-10-14: Milestone 8 complete — VirusTotal URL reputation integration. New files: ThreatIntelProviderInterface, VirusTotalResult, VirusTotalProvider, ReportCache. Modified: AnalysisController, AnalysisRepository, url_result view. 40/40 unit tests pass. ADR-008 resolved.

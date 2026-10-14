@@ -23,12 +23,20 @@ class AnalysisRepository
      * Persist a completed analysis result.
      * input_excerpt is capped at 500 chars to avoid storing full message bodies.
      *
-     * @param array<string,mixed> $result from UrlAnalysisService::analyze()
-     * @param int|null $userId  null for anonymous
+     * @param array<string,mixed> $result       from UrlAnalysisService::analyze()
+     * @param int|null            $userId        null for anonymous
+     * @param string              $threatStatus  maps to analyses.threat_status ENUM
+     *                                           ('not_checked'|'no_match'|'match'|'unavailable')
      * @return int  new analysis ID
      */
-    public function create(array $result, ?int $userId): int
+    public function create(array $result, ?int $userId, string $threatStatus = 'not_checked'): int
     {
+        // Validate the threat_status value against the DB ENUM.
+        $allowed = ['not_checked', 'no_match', 'match', 'unavailable'];
+        if (!in_array($threatStatus, $allowed, true)) {
+            $threatStatus = 'not_checked';
+        }
+
         $excerpt = mb_substr((string)($result['input'] ?? ''), 0, 500);
         $stmt = $this->pdo->prepare(
             'INSERT INTO analyses
@@ -43,7 +51,7 @@ class AnalysisRepository
             $result['risk_level']  ?? 'low',
             '1.4',
             json_encode($result, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE),
-            'not_checked',
+            $threatStatus,
         ]);
         return (int)$this->pdo->lastInsertId();
     }

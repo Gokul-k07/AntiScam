@@ -23,6 +23,17 @@ class Router
     private $dynamicHandler = null;
 
     /**
+     * Return the URL base path for building links and asset URLs.
+     * Returns '' when served at a vhost root, or '/AntiScam/public' when in subfolder.
+     * Use in views:  Router::basePath() . '/assets/css/tokens.css'
+     */
+    public static function basePath(): string
+    {
+        $scriptName = (string)($_SERVER['SCRIPT_NAME'] ?? '');
+        return rtrim(dirname($scriptName), '/\\');
+    }
+
+    /**
      * Register a route.
      *
      * @param string   $method  HTTP method (GET, POST, …)
@@ -68,6 +79,14 @@ class Router
     /**
      * Match and dispatch the current request.
      *
+     * Works correctly whether the app is served:
+     *   (a) at a vhost root   — http://scamshield.local/  (SCRIPT_NAME = /index.php)
+     *   (b) in a subfolder    — http://localhost/AntiScam/public/ (SCRIPT_NAME = /AntiScam/public/index.php)
+     *
+     * Strategy: derive basePath from dirname(SCRIPT_NAME), strip it from
+     * REQUEST_URI, then normalize. This means routes are always registered
+     * as '/', '/analyze', etc. regardless of the URL prefix.
+     *
      * @param string $method HTTP method from $_SERVER['REQUEST_METHOD']
      * @param string $uri    Request URI from $_SERVER['REQUEST_URI']
      */
@@ -75,8 +94,21 @@ class Router
     {
         $method = strtoupper($method);
 
-        // Strip query string, normalize path.
-        $path = $this->normalizePath(strtok($uri, '?') ?: '/');
+        // Strip query string
+        $uriPath = strtok($uri, '?') ?: '/';
+
+        // Compute base path from SCRIPT_NAME so the router works in a subfolder.
+        // e.g. SCRIPT_NAME = /AntiScam/public/index.php  →  basePath = /AntiScam/public
+        //      SCRIPT_NAME = /index.php                  →  basePath = (empty string)
+        $scriptName = (string)($_SERVER['SCRIPT_NAME'] ?? '');
+        $basePath   = rtrim(dirname($scriptName), '/\\');
+
+        // Strip base path prefix from URI (case-insensitive on Windows paths)
+        if ($basePath !== '' && stripos($uriPath, $basePath) === 0) {
+            $uriPath = substr($uriPath, strlen($basePath));
+        }
+
+        $path = $this->normalizePath($uriPath ?: '/');
 
         if (isset($this->routes[$method][$path])) {
             ($this->routes[$method][$path])();

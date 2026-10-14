@@ -9,12 +9,14 @@
  * Falls back gracefully if not set.
  */
 $currentPage = $currentPage ?? '';
+// $base is set by main.php layout (Router::basePath()). Fallback for safety.
+$base = $base ?? \App\Support\Router::basePath();
 ?>
 <div class="site-nav" role="navigation" aria-label="Main navigation">
     <div class="container site-nav__inner">
 
         <!-- Logo + brand -->
-        <a href="/" class="site-nav__brand" aria-label="ScamShield — home">
+        <a href="<?= $base ?>/" class="site-nav__brand" aria-label="ScamShield — home">
             <span class="site-nav__brand-icon" aria-hidden="true">
                 <!-- SVG shield icon — no external image dependency -->
                 <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true" focusable="false">
@@ -29,7 +31,7 @@ $currentPage = $currentPage ?? '';
 
         <!-- Primary nav links -->
         <nav class="site-nav__links" aria-label="Site pages">
-            <a href="/"
+            <a href="<?= $base ?>/"
                class="site-nav__link <?= ($currentPage ?? '') === 'home' ? 'is-active' : '' ?>"
                <?= ($currentPage ?? '') === 'home' ? 'aria-current="page"' : '' ?>>
                 Analyzer
@@ -38,7 +40,7 @@ $currentPage = $currentPage ?? '';
                   aria-disabled="true"
                   title="Coming soon">Pattern Registry</span>
             <?php if (!empty($navUser)): ?>
-            <a href="/incidents"
+            <a href="<?= $base ?>/incidents"
                class="site-nav__link <?= ($currentPage ?? '') === 'incidents' ? 'is-active' : '' ?>"
                <?= ($currentPage ?? '') === 'incidents' ? 'aria-current="page"' : '' ?>>
                 My Incidents
@@ -64,15 +66,35 @@ $currentPage = $currentPage ?? '';
             </div>
             <?php if (!empty($navUser)): ?>
                 <?php if (!empty($navIsAdmin)): ?>
-                    <a href="/admin/incidents" class="t-code-sm site-nav__ext-link" style="color:var(--primary-container);">[ADMIN]</a>
+                    <a href="<?= $base ?>/admin/incidents" class="t-code-sm site-nav__ext-link" style="color:var(--primary-container);">[ADMIN]</a>
                 <?php endif; ?>
-                <span class="t-code-sm" style="color:var(--on-surface-variant);">
-                    <?= htmlspecialchars($navUser['display_name'], ENT_QUOTES, 'UTF-8') ?>
+                <span class="site-nav__user" style="display:flex;align-items:center;gap:5px;color:var(--on-surface-variant);">
+                    <?php if (!empty($navIsAdmin)): ?>
+                        <!-- Admin shield icon -->
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                             aria-label="Administrator" role="img" focusable="false"
+                             style="flex-shrink:0;color:var(--primary-container);">
+                            <path d="M8 1L2.5 3.5v4C2.5 10.9 5 13.5 8 14.5c3-1 5.5-3.6 5.5-7v-4L8 1z"
+                                  fill="currentColor" opacity="0.25" stroke="currentColor" stroke-width="1.2"/>
+                            <path d="M5.5 8l2 2 3-3" stroke="currentColor" stroke-width="1.3"
+                                  stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    <?php else: ?>
+                        <!-- User person icon -->
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                             aria-label="User" role="img" focusable="false"
+                             style="flex-shrink:0;color:var(--on-surface-variant);">
+                            <circle cx="8" cy="5.5" r="2.5" stroke="currentColor" stroke-width="1.3"/>
+                            <path d="M3 13.5c0-2.5 2.2-4.5 5-4.5s5 2 5 4.5"
+                                  stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                        </svg>
+                    <?php endif; ?>
+                    <span class="t-code-sm"><?= htmlspecialchars($navUser['display_name'], ENT_QUOTES, 'UTF-8') ?></span>
                 </span>
-                <a href="/logout" class="btn btn-secondary btn-sm">Sign Out</a>
+                <a href="<?= $base ?>/logout" class="btn btn-secondary btn-sm">Sign Out</a>
             <?php else: ?>
-                <a href="/login"    class="t-code-sm site-nav__ext-link">Sign In</a>
-                <a href="/register" class="btn btn-secondary btn-sm">Register</a>
+                <a href="<?= $base ?>/login"    class="t-code-sm site-nav__ext-link">Sign In</a>
+                <a href="<?= $base ?>/register" class="btn btn-secondary btn-sm">Register</a>
             <?php endif; ?>
         </div>
 

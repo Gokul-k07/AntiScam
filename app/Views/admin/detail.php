@@ -4,6 +4,7 @@ $e = fn($v) => htmlspecialchars((string)$v, ENT_QUOTES|ENT_SUBSTITUTE, 'UTF-8');
 
 $incident           = $incident           ?? [];
 $history            = $history            ?? [];
+$evidence           = $evidence           ?? [];
 $allowedTransitions = $allowedTransitions ?? [];
 $success            = $success            ?? null;
 $error              = $error              ?? null;
@@ -72,6 +73,59 @@ $badgeClass = match($status) {
                         <p class="t-body-sm" style="font-weight:600;color:var(--on-surface-variant);margin-bottom:4px;">Description</p>
                         <p class="t-body-md" style="white-space:pre-wrap;"><?= $e($incident['description'] ?? '') ?></p>
                     </div>
+                </div>
+            </div>
+
+            <!-- Evidence files -->
+            <div class="card" style="border:var(--border-hairline);margin-bottom:var(--space-md);">
+                <div class="card-header">
+                    <h2 class="t-headline-sm">Evidence Files</h2>
+                    <span class="badge badge-neutral"><?= count($evidence) ?> file<?= count($evidence) !== 1 ? 's' : '' ?></span>
+                </div>
+                <div class="card-body" style="padding:0;">
+                    <?php if (empty($evidence)): ?>
+                        <div class="empty-state" style="margin:var(--space-md);font-size:var(--text-body-sm);">No evidence files attached to this incident.</div>
+                    <?php else: ?>
+                        <table class="data-table" aria-label="Evidence files for incident <?= $ref ?>">
+                            <thead><tr>
+                                <th scope="col">Filename</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Size</th>
+                                <th scope="col">Uploaded</th>
+                                <th scope="col">SHA-256</th>
+                                <th scope="col"><span class="sr-only">Action</span></th>
+                            </tr></thead>
+                            <tbody>
+                            <?php foreach ($evidence as $ev): ?>
+                                <?php
+                                $mime      = (string)($ev['detected_mime'] ?? '');
+                                $isImage   = in_array($mime, ['image/jpeg','image/png','image/gif'], true);
+                                $sha256    = (string)($ev['sha256'] ?? '');
+                                $shortHash = $sha256 !== '' ? substr($sha256, 0, 12) . '…' : '—';
+                                ?>
+                                <tr>
+                                    <td class="t-code-sm"><?= $e($ev['original_name']) ?></td>
+                                    <td class="t-body-sm"><?= $e($mime) ?></td>
+                                    <td class="t-body-sm" style="white-space:nowrap;"><?= $e(number_format((int)$ev['size_bytes'] / 1024, 1)) ?> KB</td>
+                                    <td class="t-body-sm" style="white-space:nowrap;"><?= $e(substr((string)($ev['created_at'] ?? ''), 0, 10)) ?></td>
+                                    <td class="t-code-sm" title="<?= $e($sha256) ?>"><?= $e($shortHash) ?></td>
+                                    <td style="white-space:nowrap;">
+                                        <a href="/evidence/<?= (int)$ev['id'] ?>/download"
+                                           class="btn-tertiary"
+                                           aria-label="Download <?= $e($ev['original_name']) ?>">↓ Download</a>
+                                        <?php if ($isImage): ?>
+                                            <a href="/evidence/<?= (int)$ev['id'] ?>/download"
+                                               target="_blank"
+                                               rel="noopener noreferrer"
+                                               class="btn-tertiary"
+                                               aria-label="Preview image <?= $e($ev['original_name']) ?>">⧉ Preview</a>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    <?php endif; ?>
                 </div>
             </div>
 
