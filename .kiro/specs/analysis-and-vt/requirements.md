@@ -1,4 +1,4 @@
-# Requirements Document: Analysis Engine and VirusTotal Integration
+# Requirements Document
 
 ## Introduction
 
@@ -16,15 +16,13 @@ Both milestones are **fully implemented** as of 2026-10-14. This spec documents 
 - **VT result:** `VirusTotalResult` — immutable value object with status and engine-count fields.
 - **Report cache:** `ReportCache` — flat-file cache in `storage/vt_cache/`; SHA-256 keyed JSON.
 - **Risk band:** low (0–24) / moderate (25–54) / high (55–84) / critical (85–100).
-- **Threat status:** DB ENUM value written to `analyses.threat_status`: `not_checked`, `no_match`, `match`, `unavailable`.
+- **Threat status:** DB ENUM written to `analyses.threat_status`: `not_checked`, `no_match`, `match`, `unavailable`.
 
----
+## Requirements
 
-## Part 1: Heuristic Analysis (Milestone 4)
+### Requirement 1: URL Heuristic Analysis
 
-### Requirement A1: URL Analysis
-
-**User story:** As a user, I want to submit a suspicious URL and receive an immediate, explainable risk assessment so I can decide whether to interact with it.
+**User Story:** As a user, I want to submit a suspicious URL and receive an immediate, explainable risk assessment so I can decide whether to interact with it.
 
 #### Acceptance Criteria
 
@@ -32,7 +30,7 @@ Both milestones are **fully implemented** as of 2026-10-14. This spec documents 
 2. WHEN a URL is submitted, THEN up to 8 deterministic rules are evaluated; each triggered rule returns: trigger ID, tag, title, body, weight, severity, and a regulatory/advisory reference.
 3. WHEN the URL uses HTTP (not HTTPS), THEN `RULE_NO_TLS_V1` fires with weight 15.
 4. WHEN the host is a raw IPv4 or IPv6 address, THEN `RULE_RAW_IP_TARGET` fires with weight 35.
-5. WHEN the URL contains a known Indian PSB brand keyword and is not on an official domain, THEN `RULE_PSB_KEYWORD_SLUG` fires with weight 20.
+5. WHEN the URL contains a known Indian PSB brand keyword on a non-official domain, THEN `RULE_PSB_KEYWORD_SLUG` fires with weight 20.
 6. WHEN the URL contains a government/utility keyword on an unofficial domain, THEN `RULE_UTIL_KEYWORD` fires with weight 12.
 7. WHEN the host ends in a high-abuse TLD (.xyz, .tk, .ml, .ga, .cf, .gq, .top, .club, .work, .loan, .win), THEN `RULE_SUSPICIOUS_TLD` fires with weight 8.
 8. WHEN the query string contains a sensitive parameter name (auth, token, session, key, pass, verify, otp, id), THEN `RULE_HARVEST_QUERY` fires with weight 8.
@@ -54,11 +52,9 @@ Both milestones are **fully implemented** as of 2026-10-14. This spec documents 
 | Empty input | `"   "` | low / 0 / 0 findings | ✅ PASS |
 | Official SBI URL | `https://onlinesbi.sbi/personal/login.html` | low / 0 / 0 findings | ✅ PASS |
 
----
+### Requirement 2: SMS and Message Text Analysis
 
-### Requirement A2: SMS / Message Text Analysis
-
-**User story:** As a user, I want to paste SMS or chat text and see which scam patterns it contains.
+**User Story:** As a user, I want to paste SMS or chat text and see which scam patterns it contains.
 
 #### Acceptance Criteria
 
@@ -78,11 +74,9 @@ Both milestones are **fully implemented** as of 2026-10-14. This spec documents 
 |---|---|---|---|
 | SBI KYC SMS with embedded URL | "Dear SBI user… Update KYC at http://sbi-kyc-update-portal.in/login within 2 hours." | high / 83 / 6 findings | ✅ PASS |
 
----
+### Requirement 3: UPI and Payment String Analysis
 
-### Requirement A3: UPI / Payment String Analysis
-
-**User story:** As a user, I want to paste a UPI string or payment request message and see if it shows reversal-trap or impersonation patterns.
+**User Story:** As a user, I want to paste a UPI string or payment request message and see if it shows reversal-trap or impersonation patterns.
 
 #### Acceptance Criteria
 
@@ -100,13 +94,9 @@ Both milestones are **fully implemented** as of 2026-10-14. This spec documents 
 |---|---|---|---|
 | UPI reverse trick | "Enter your UPI PIN to receive refund of Rs 4999" | moderate / 50 / 1 finding | ✅ PASS |
 
----
+### Requirement 4: VirusTotal External Reputation Lookup
 
-## Part 2: VirusTotal Integration (Milestone 8)
-
-### Requirement B1: External reputation lookup for URL analyses
-
-**User story:** As a user, I want to see VirusTotal engine counts alongside the heuristic result so I have external reputation context when evaluating a URL.
+**User Story:** As a user, I want to see VirusTotal engine counts alongside the heuristic result so I have external reputation context when evaluating a URL.
 
 #### Acceptance Criteria
 
@@ -123,22 +113,26 @@ Both milestones are **fully implemented** as of 2026-10-14. This spec documents 
 11. WHEN a not_found result is displayed, THEN a mandatory caveat states: absence is not evidence of safety.
 12. WHEN any VT result is displayed, THEN it is clearly labelled as "External Reputation" and distinct from the heuristic verdict.
 
-### Requirement B2: Report caching
+### Requirement 5: VirusTotal Report Caching
+
+**User Story:** As a developer, I want VT results cached locally so that repeated lookups for the same URL do not consume the public API quota unnecessarily.
 
 #### Acceptance Criteria
 
 1. WHEN a `found` or `not_found` result is obtained, THEN it is cached in `storage/vt_cache/{sha256(url)}.json`.
 2. WHEN a `rate_limited` or `unavailable` result is obtained, THEN it is NOT cached.
-3. WHEN a cached result exists and has not exceeded the TTL, THEN it is returned without a network call; `fromCache=true` is set.
+3. WHEN a cached result exists and has not exceeded the TTL, THEN it is returned without a network call; `fromCache=true` is set on the result.
 4. WHEN a cached result exceeds the TTL (default 3600 s), THEN it is discarded and a fresh API call is made.
 5. WHEN a cache file contains corrupt JSON, THEN it is silently deleted and null is returned.
 6. WHEN `VIRUSTOTAL_CACHE_TTL_SECONDS` is set in `.env`, THEN that value overrides the default.
 
-### Requirement B3: Security constraints
+### Requirement 6: VirusTotal Security and Privacy Constraints
+
+**User Story:** As a security-conscious developer, I want the VirusTotal integration to handle the API key and user data safely so that secrets are never exposed and private message content never leaves the server.
 
 #### Acceptance Criteria
 
-1. WHEN `VirusTotalProvider` makes an API call, THEN the `VIRUSTOTAL_API_KEY` is passed ONLY as an HTTP request header (`x-apikey`) — never logged, never stored in an object property, never echoed.
+1. WHEN `VirusTotalProvider` makes an API call, THEN `VIRUSTOTAL_API_KEY` is passed ONLY as an HTTP request header (`x-apikey`) — never logged, never stored in an object property, never echoed.
 2. WHEN the VT API is called, THEN TLS peer verification is enabled (`verify_peer=true`, `verify_peer_name=true`).
 3. WHEN SMS or UPI input is submitted, THEN it is NEVER passed to `VirusTotalProvider::lookup()`.
 4. WHEN logging VT results, THEN no API key or user-submitted URL content appears in log entries.
@@ -156,9 +150,7 @@ Both milestones are **fully implemented** as of 2026-10-14. This spec documents 
 
 > Note: The unit tests above are all offline (no network). Live API behavior (HTTP 200/404/429 responses) requires a real `VIRUSTOTAL_API_KEY` in `.env` — not yet tested end-to-end.
 
----
-
-## Open items
+## Open Items
 
 | Item | Status |
 |---|---|
