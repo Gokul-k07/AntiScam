@@ -2,7 +2,7 @@
 /**
  * Page: home.php (civic_scam_checking_utility screen)
  *
- * Matches Stitch design: asymmetric hero inspector, dark RBI statement band,
+ * Matches design: asymmetric hero inspector, dark RBI statement band,
  * capability split, 4-step emergency triage, institutional registry strip.
  * All data is static/editorial — no dynamic bindings on this page.
  * No inline styles, no Tailwind CDN.

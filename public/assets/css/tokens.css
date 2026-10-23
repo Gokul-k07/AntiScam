@@ -1,7 +1,7 @@
 /**
  * ScamShield — Design Tokens
  *
- * Source of truth: design/stitch/design/DESIGN.md (Stitch-approved palette).
+ * Source of truth: design/DESIGN.md (design palette reference).
  * These variables drive all visual decisions in base.css and components.css.
  *
  * Core editorial palette (from DESIGN.md "Colors" section):
@@ -29,7 +29,7 @@
 
   --color-canvas:           #FFFFFF;   /* Base Canvas */
 
-  /* ── Semantic surface scale (from Stitch material colors) ──────────── */
+  /* ── Semantic surface scale (material colors) ──────────────────────── */
   --surface:                   #fbf9f8;
   --surface-dim:               #dcd9d9;
   --surface-bright:            #fbf9f8;

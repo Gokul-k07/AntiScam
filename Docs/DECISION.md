@@ -12,8 +12,8 @@ Record decisions that materially affect architecture, security, product scope, o
 - **Status:** Accepted
 - **Date:** 2026-10-12
 - **Context:** The project must satisfy a PHP + MySQL learning/project requirement and should be feasible to build and test locally.
-- **Decision:** Build a local-first web application using PHP 8.2, MariaDB 10.4 through XAMPP, and custom HTML/CSS/JS (no Bootstrap CDN for final UI — custom design system from Stitch).
-- **Note:** The original ADR referenced Bootstrap; the final implementation uses a custom three-file CSS system (tokens.css / base.css / components.css) derived from Stitch-exported designs.
+- **Decision:** Build a local-first web application using PHP 8.2, MariaDB 10.4 through XAMPP, and custom HTML/CSS/JS (no Bootstrap CDN for final UI).
+- **Note:** The original ADR referenced Bootstrap; the final implementation uses a custom three-file CSS system (tokens.css / base.css / components.css) designs.
 - **Consequences:** The first version can analyze user-submitted data but cannot automatically inspect all device activity. Browser/mobile clients are later projects.
 - **Revisit when:** The web MVP is tested and the need for device-level protection is clearly defined.
 

@@ -1,0 +1,69 @@
+# ScamShield — htdocs/.htaccess
+# InfinityFree deployment: htdocs/ IS the web root for scamshield.site.je
+#
+# Requirements:
+#  - mod_rewrite must be enabled (it is on InfinityFree)
+#  - AllowOverride All must be set (it is on InfinityFree for htdocs/)
+#
+# All PHP source, config, storage, and database dirs are subdirectories of
+# htdocs/ and are protected by their own .htaccess files (Require all denied).
+# This file handles URL routing and top-level security.
+
+Options -Indexes
+
+# ── Block dotfiles (prevents .env, .git, .htaccess source exposure) ───────
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+
+# ── Block PHP source in protected subdirectories ───────────────────────────
+# Belt-and-suspenders: even if subdir .htaccess fails, block direct PHP access
+# to app/, config/, database/, storage/ from here.
+<FilesMatch "\.(php|phtml|php3|php4|php5|phps|phar)$">
+    <If "%{REQUEST_URI} =~ m|^/(app|config|database|storage)/|">
+        Require all denied
+    </If>
+</FilesMatch>
+
+# ── Force HTTPS ────────────────────────────────────────────────────────────
+# InfinityFree provides free SSL. Redirect plain HTTP to HTTPS.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Redirect HTTP to HTTPS (InfinityFree terminates SSL at the load balancer;
+    # HTTPS is detectable via X-Forwarded-Proto or HTTPS server variable).
+    RewriteCond %{HTTPS} off
+    RewriteCond %{HTTP:X-Forwarded-Proto} !https
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+    # Serve existing static files and directories directly (assets/).
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # Route all other requests through the front controller.
+    RewriteRule ^ index.php [QSA,L]
+</IfModule>
+
+# ── PHP production settings (where mod_php or php_admin is available) ─────
+<IfModule mod_php.c>
+    php_flag  display_errors       Off
+    php_flag  display_startup_errors Off
+    php_value error_reporting      E_ALL
+    php_flag  log_errors           On
+</IfModule>
+
+# ── Security headers ──────────────────────────────────────────────────────
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set X-XSS-Protection "1; mode=block"
+    # Remove server signature from responses
+    Header unset Server
+    Header unset X-Powered-By
+</IfModule>
+
+# ── Prevent access to sensitive file extensions ───────────────────────────
+<FilesMatch "\.(sql|log|env|json|lock|md|gitignore|example)$">
+    Require all denied
+</FilesMatch>

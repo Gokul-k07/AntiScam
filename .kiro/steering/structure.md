@@ -101,8 +101,10 @@ AntiScam/
 │   ├── schema.sql     ← full MVP schema (users, analyses, incidents, evidence_files,
 │   │                     incident_status_history, audit_logs)
 │   └── setup.php      ← CLI database creation script
-├── design/
-│   └── stitch/        ← Stitch-exported design reference (not served)
+├── design/            ← Design reference (not served)
+├── deploy/
+│   └── infinityfree/  ← InfinityFree deployment package; upload htdocs/ contents to server
+│       └── htdocs/    ← mirrors web root; see Docs/DEPLOYMENT_INFINITYFREE.md
 ├── public/            ← ONLY this directory is web-accessible (via Apache vhost)
 │   ├── index.php      ← front controller + all routes
 │   ├── .htaccess      ← mod_rewrite rules

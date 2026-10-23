@@ -1,6 +1,6 @@
 # ScamShield — UI and Experience Design
 
-- **Status:** Implemented v1.0 (Stitch-approved design system)
+- **Status:** Implemented v1.0 (approved design system)
 - **Last reviewed:** 2026-10-13
 
 ## 1. Design objective
@@ -11,16 +11,16 @@ Aesthetic: Structural Utility — ruled grids, hairline borders, flat depth. No 
 
 ## 2. Source of truth
 
-`design/stitch/design/DESIGN.md` is the canonical visual reference (Stitch-exported, October 2026).
+`design/design/DESIGN.md` is the canonical visual reference (October 2026).
 The three exported screens map directly to implemented PHP views:
 
-| Stitch screen folder | PHP view |
+| screen folder | PHP view |
 |---|---|
 | `scamshield_civic_scam_checking_utility` | `app/Views/pages/home.php` |
 | `scamshield_heuristic_analyzer` | `app/Views/pages/analyzer.php` |
 | `scamshield_link_analysis_result_specimen_link_8841_in` | `app/Views/analysis/url_result.php` |
 
-`design/stitch/` is kept as a reference; it is not served publicly.
+`design/` is kept as a reference; it is not served publicly.
 
 ## 3. Color palette (implemented)
 

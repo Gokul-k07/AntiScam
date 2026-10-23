@@ -7,7 +7,7 @@
  * No CSRF needed here (GET preview) — POST in AnalysisController validates input.
  *
  * No inline styles (only class-based), no Tailwind.
- * Matches the Stitch heuristic_analyzer screen hero.
+ * Matches the heuristic_analyzer screen hero.
  */
 $formAction = $formAction ?? '/analyze';
 $activeTab  = $activeTab  ?? 'url';

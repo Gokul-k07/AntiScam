@@ -4,7 +4,7 @@
  *
  * Non-dismissible system-wide public warning banner.
  * Rendered at the very top of the page, above the navigation.
- * From Stitch DESIGN.md: Safety Orange tint bg, 2px bottom border.
+ * From DESIGN.md: Safety Orange tint bg, 2px bottom border.
  */
 ?>
 <div

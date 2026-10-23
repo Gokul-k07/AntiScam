@@ -1,0 +1,11 @@
+# ScamShield — storage/.htaccess
+# CRITICAL: This directory contains private files that must NEVER be
+# directly accessible via HTTP:
+#   storage/evidence/  — uploaded evidence files (contain user data)
+#   storage/vt_cache/  — VirusTotal API response cache (JSON)
+#   storage/logs/      — application and PHP error logs
+#
+# PHP can still read/write here (open_basedir allows htdocs/).
+# Direct HTTP requests to any file in this tree are denied.
+
+Require all denied

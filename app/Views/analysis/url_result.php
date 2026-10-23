@@ -2,8 +2,8 @@
 /**
  * View: analysis/url_result.php (link_analysis_result screen)
  *
- * Full result page. Matches the Stitch link_analysis_result specimen screen.
- * ALL sample text from Stitch is replaced with dynamic $result data.
+ * Full result page. Matches the  link_analysis_result specimen screen.
+ * ALL sample text is replaced with dynamic $result data.
  *
  * Variables from AnalysisController:
  *   $result      : array from UrlAnalysisService::analyze()

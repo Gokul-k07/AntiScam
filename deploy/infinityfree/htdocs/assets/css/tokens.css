@@ -1,0 +1,165 @@
+/**
+ * ScamShield — Design Tokens
+ *
+ * Source of truth: design/DESIGN.md (design palette reference).
+ * These variables drive all visual decisions in base.css and components.css.
+ *
+ * Core editorial palette (from DESIGN.md "Colors" section):
+ *   Safety Orange  #FF742D  — threat signals, critical actions
+ *   Trust Blue     #0A2391  — institutional verification, focus states
+ *   Structural Charcoal #373737 — deep ink, structural framing
+ *   Canvas White   #FFFFFF  — base inspection surface
+ */
+
+:root {
+
+  /* ── Core brand ──────────────────────────────────────────────────────── */
+  --color-orange:           #FF742D;   /* Safety Orange — primary alert */
+  --color-orange-tint-10:   #FFF1EA;   /* threat item bg, high-risk pills */
+  --color-orange-tint-20:   #FFE3D5;   /* hover on urgent badges */
+
+  --color-blue:             #0A2391;   /* Trust Blue — verified, focus */
+  --color-blue-tint-8:      #EBEFFE;   /* verified domain bg */
+  --color-blue-tint-15:     #D8DFFA;   /* selected state accents */
+
+  --color-charcoal:         #373737;   /* Structural Charcoal */
+  --color-charcoal-tint-6:  #F3F3F3;   /* table headers, code containers */
+  --color-charcoal-tint-10: #EBEBEB;   /* divider tracks, inactive borders */
+  --color-charcoal-tint-15: #E2E2E2;   /* hairline structural frames */
+
+  --color-canvas:           #FFFFFF;   /* Base Canvas */
+
+  /* ── Semantic surface scale (material colors) ──────────────────────── */
+  --surface:                   #fbf9f8;
+  --surface-dim:               #dcd9d9;
+  --surface-bright:            #fbf9f8;
+  --surface-container-lowest:  #ffffff;
+  --surface-container-low:     #f6f3f2;
+  --surface-container:         #f0eded;
+  --surface-container-high:    #eae8e7;
+  --surface-container-highest: #e4e2e1;
+
+  /* ── Text ────────────────────────────────────────────────────────────── */
+  --on-surface:              #1b1c1c;
+  --on-surface-variant:      #594238;
+  --inverse-surface:         #303030;
+  --inverse-on-surface:      #f3f0f0;
+
+  /* ── Borders / outlines ─────────────────────────────────────────────── */
+  --outline:                 #8c7166;
+  --outline-variant:         #e0c0b3;
+
+  /* ── Primary (orange) material tokens ──────────────────────────────── */
+  --primary:                 #a33e00;
+  --on-primary:              #ffffff;
+  --primary-container:       #ff742d;  /* = Safety Orange */
+  --on-primary-container:    #5f2100;
+  --inverse-primary:         #ffb596;
+  --primary-fixed:           #ffdbcd;
+  --primary-fixed-dim:       #ffb596;
+  --on-primary-fixed:        #360f00;
+  --on-primary-fixed-variant:#7c2e00;
+
+  /* ── Secondary (blue) material tokens ──────────────────────────────── */
+  --secondary:               #4254be;
+  --on-secondary:            #ffffff;
+  --secondary-container:     #8193ff;
+  --on-secondary-container:  #0a2391;  /* = Trust Blue */
+  --secondary-fixed:         #dee0ff;
+  --secondary-fixed-dim:     #bbc3ff;
+  --on-secondary-fixed:      #000f5c;
+  --on-secondary-fixed-variant: #273ba5;
+
+  /* ── Tertiary ────────────────────────────────────────────────────────── */
+  --tertiary:                #006686;
+  --on-tertiary:             #ffffff;
+  --tertiary-container:      #00aadc;
+  --on-tertiary-container:   #003a4d;
+
+  /* ── Error / danger ─────────────────────────────────────────────────── */
+  --error:                   #ba1a1a;
+  --on-error:                #ffffff;
+  --error-container:         #ffdad6;
+  --on-error-container:      #93000a;
+
+  /* ── Background ─────────────────────────────────────────────────────── */
+  --background:              #fbf9f8;
+  --on-background:           #1b1c1c;
+  --surface-variant:         #e4e2e1;
+  --surface-tint:            #a33e00;
+
+  /* ── Typography families ────────────────────────────────────────────── */
+  --font-headline:   'Space Grotesk', system-ui, sans-serif;
+  --font-body:       'IBM Plex Sans', system-ui, sans-serif;
+  --font-mono:       'IBM Plex Mono', 'Courier New', monospace;
+
+  /* ── Type scale ─────────────────────────────────────────────────────── */
+  --text-headline-xl:        44px;
+  --lh-headline-xl:          52px;
+  --ls-headline-xl:          -0.02em;
+
+  --text-headline-xl-mob:    32px;
+  --lh-headline-xl-mob:      40px;
+
+  --text-headline-lg:        32px;
+  --lh-headline-lg:          38px;
+  --ls-headline-lg:          -0.02em;
+
+  --text-headline-lg-mob:    26px;
+  --lh-headline-lg-mob:      32px;
+
+  --text-headline-md:        22px;
+  --lh-headline-md:          28px;
+  --ls-headline-md:          -0.015em;
+
+  --text-headline-sm:        18px;
+  --lh-headline-sm:          24px;
+  --ls-headline-sm:          -0.01em;
+
+  --text-body-lg:            16px;
+  --lh-body-lg:              24px;
+
+  --text-body-md:            14px;
+  --lh-body-md:              20px;
+
+  --text-body-sm:            12px;
+  --lh-body-sm:              16px;
+
+  --text-code-lg:            15px;
+  --lh-code-lg:              20px;
+
+  --text-code-md:            13px;
+  --lh-code-md:              18px;
+
+  --text-code-sm:            11px;
+  --lh-code-sm:              14px;
+
+  /* ── Corner radii ───────────────────────────────────────────────────── */
+  --radius-micro:   2px;   /* chips, tags, indicators */
+  --radius-panel:   4px;   /* structural panels, inputs */
+  --radius-none:    0px;
+
+  /* ── Spacing scale (4px/8px modular) ───────────────────────────────── */
+  --space-xs:       0.25rem;   /*  4px */
+  --space-sm:       0.5rem;    /*  8px */
+  --space-md:       1rem;      /* 16px */
+  --space-lg:       1.5rem;    /* 24px */
+  --space-xl:       2.5rem;    /* 40px */
+  --gutter:         1rem;
+  --gutter-desktop: 1.5rem;
+  --margin:         1rem;
+  --margin-desktop: 2.5rem;
+
+  /* ── Layout ─────────────────────────────────────────────────────────── */
+  --max-canvas:     1200px;
+
+  /* ── Elevation: hairline borders only, no shadows ──────────────────── */
+  --border-hairline:       1px solid var(--color-charcoal-tint-15);   /* #E2E2E2 */
+  --border-structural:     1px solid var(--color-charcoal);            /* #373737 */
+  --border-alert:          1px solid var(--color-orange);              /* #FF742D */
+  --border-verified:       1px solid var(--color-blue);                /* #0A2391 */
+
+  /* ── Focus ring ─────────────────────────────────────────────────────── */
+  --focus-ring:            2px solid var(--color-blue);
+  --focus-ring-offset:     2px;
+}

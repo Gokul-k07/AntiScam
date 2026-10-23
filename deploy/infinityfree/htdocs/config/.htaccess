@@ -1,0 +1,6 @@
+# ScamShield — config/.htaccess
+# CRITICAL: This directory contains credentials (.env) and configuration.
+# All direct HTTP access is denied unconditionally.
+# PHP can still require/include files here (open_basedir allows htdocs/).
+
+Require all denied

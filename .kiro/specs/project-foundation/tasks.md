@@ -1,4 +1,4 @@
-# Tasks: Project Foundation
+# Implementation Plan
 
 ## Overview
 Milestone 0 (repository/environment) and Milestone 1 (application skeleton) implementation tasks. Each task corresponds to requirements and design in this spec.

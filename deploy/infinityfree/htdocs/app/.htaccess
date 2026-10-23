@@ -1,0 +1,5 @@
+# ScamShield — app/.htaccess
+# Deny direct HTTP access to all application source files.
+# PHP requires/includes these files internally — they are never served directly.
+
+Require all denied

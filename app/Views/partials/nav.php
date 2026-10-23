@@ -3,7 +3,7 @@
  * Partial: nav.php
  *
  * Main navigation bar: ScamShield logo + nav links + helpline.
- * Matches the Stitch heuristic_analyzer screen nav.
+ * Matches the heuristic_analyzer screen nav.
  *
  * Expects $currentPage (string) to be in scope to mark the active link.
  * Falls back gracefully if not set.

@@ -3,7 +3,7 @@
  * Partial: footer.php
  *
  * Site-wide footer with helpline, disclaimer, and footer links.
- * Matches the Stitch design across all three screens.
+ * Matches the design across all three screens.
  */
 ?>
 <footer class="site-footer" role="contentinfo">

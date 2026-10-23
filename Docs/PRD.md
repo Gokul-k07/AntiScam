@@ -132,7 +132,7 @@ People receive deceptive messages, phishing links, impersonation attempts, suspi
 - VirusTotal v3 external reputation integration (optional, configurable)
 - Incident reports, evidence upload/download, status tracking
 - Admin review dashboard and append-only audit trail
-- Stitch-designed UI converted to semantic PHP views
+- Custom UI implemented as semantic PHP views (tokens → base → components CSS)
 - 45/45 automated offline tests pass
 
 ### Planned (post-MVP)

@@ -13,7 +13,7 @@ This file preserves durable project context across coding sessions. Update it wh
 - **Local project root:** `C:\xampp\htdocs\AntiScam\`
 - **Documentation folder:** `C:\xampp\htdocs\AntiScam\Docs\`
 - **Version control:** Git + GitHub (`https://github.com/Gokul-k07/AntiScam.git`)
-- **Design tool:** Stitch (exported screens in `design/stitch/`)
+- **Design tool:** (screens in `design/`)
 - **Development environment:** XAMPP on Windows (local only; not publicly deployed)
 
 ---
@@ -45,7 +45,7 @@ All eight milestones are complete. The application is a fully implemented local 
 - Incident reports: create, status workflow, reference generation (`SS-YYYY-XXXXXX`)
 - Evidence: upload (jpg/jpeg/png/gif/pdf/txt/csv, 10 MB max), download, MIME validation
 - Admin review: queue, detail, status change with reason, append-only audit log
-- UI: Stitch-derived custom CSS (no Bootstrap CDN), three-file CSS system
+- UI: custom CSS (no Bootstrap CDN), three-file CSS system
 - Tests: 5/5 smoke tests, 40/40 VirusTotalProviderTest pass (2026-10-14)
 
 **Manual steps still required (not automated):**
@@ -145,6 +145,6 @@ Interface: `app/Services/Analysis/ThreatIntelProviderInterface.php`
 |---|---|
 | 2026-10-12 | Initial documentation baseline; no application code |
 | 2026-10-12 | Phase 1 complete: skeleton, routing, health endpoint. ADR-009 resolved. |
-| 2026-10-13 | Milestones 2–7: full MVP with auth, analysis, incidents, evidence, admin, Stitch UI |
+| 2026-10-13 | Milestones 2–7: full MVP with auth, analysis, incidents, evidence, admin, custom UI |
 | 2026-10-14 | Milestone 8: VirusTotal integration. 40/40 tests pass. ADR-008 resolved. |
 | 2026-10-14 | Full documentation audit: all Docs/, steering files, specs, README updated to v1.1 |

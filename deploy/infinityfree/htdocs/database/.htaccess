@@ -1,0 +1,6 @@
+# ScamShield — database/.htaccess
+# Deny direct HTTP access to schema.sql and any SQL files.
+# schema.sql must NEVER be downloadable via browser.
+# Database setup is performed only via phpMyAdmin — not via web endpoint.
+
+Require all denied

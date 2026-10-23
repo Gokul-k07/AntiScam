@@ -53,7 +53,7 @@
 - [x] `app/Repositories/AnalysisRepository.php` — persists results; input capped at 500 chars excerpt
 - [x] `app/Controllers/AnalysisController.php` — GET /analyze (form), POST /analyze (run + persist + render)
 - [x] Smoke tested: 5 cases verified (APK→critical/92, empty→low/0, SBI SMS→high/83, UPI trap→moderate/50, official SBI→low/0)
-- [x] Result page wired to real service output — all Stitch sample text replaced with dynamic data
+- [x] Result page wired to real service output — all design reference sample text replaced with dynamic data
 - [x] "Log as Incident" button on result page links to `/incidents/create?from_analysis={id}` when logged in
 - [ ] Analysis history page `/analyses` — DB and repository ready; route not wired
 
@@ -79,12 +79,12 @@
 - [x] Admin views: `admin/queue.php` (status filter), `admin/detail.php` (CSRF status change), `admin/audit.php`
 - [x] Audit log is append-only at application layer
 
-## Milestone 7 — Stitch UI conversion
-- [x] Stitch screens rebuilt as semantic PHP views (no Bootstrap CDN, no inline styles)
+## Milestone 7 — UI implementation
+- [x] Design reference screens built as semantic PHP views (no Bootstrap CDN, no inline styles)
 - [x] `public/assets/css/tokens.css` — full design token CSS custom properties
 - [x] `public/assets/css/base.css` — reset, typography, focus ring, grid, utilities
 - [x] `public/assets/css/components.css` — all component styles
-- [x] All three Stitch screens converted and wired to real backend data
+- [x] All three design screens converted and wired to real backend data
 - [x] Risk level conveyed by text + shape icon + position (accessibility)
 - [x] All PHP files pass `php -l` (syntax check)
 

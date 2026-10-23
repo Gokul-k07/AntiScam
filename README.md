@@ -51,7 +51,7 @@ ScamShield addresses this by:
 | Incident reports | ✅ Implemented | Reference `SS-YYYY-XXXXXX`; 8 incident types |
 | Evidence upload | ✅ Implemented | jpg/png/gif/pdf/txt/csv; 10 MB; MIME validated |
 | Admin review dashboard | ✅ Implemented | Status workflow, audit log, CSRF protected |
-| Stitch-derived custom UI | ✅ Implemented | No Bootstrap CDN; tokens/base/components CSS |
+| Custom UI | ✅ Implemented | No Bootstrap CDN; tokens/base/components CSS |
 | Analysis history page | ⬜ Planned | DB/repo ready; route not wired |
 | Account settings/password change | ⬜ Planned | Not implemented |
 | QR image decoding | ⬜ Planned | GD extension absent; deferred |
@@ -106,7 +106,9 @@ AntiScam/
 │   └── Support/        ← Autoloader, Bootstrap, Csrf, Database, ErrorHandler, Logger, Router, Session
 ├── config/             ← env.php, app.php, database.php
 ├── database/           ← schema.sql (6 tables), setup.php (CLI creation script)
-├── design/stitch/      ← Exported Stitch reference screens (not served)
+├── deploy/
+│   └── infinityfree/   ← InfinityFree deployment package (upload htdocs/ contents to server)
+├── design/             ← Exported reference screens (not served)
 ├── public/             ← WEB ROOT: index.php, .htaccess, assets/css|js|images
 ├── storage/
 │   ├── evidence/       ← Private uploads (gitignored, not web-accessible)
@@ -435,7 +437,7 @@ When enabled, ScamShield retrieves an **existing** VirusTotal URL report for the
 - User accounts, CSRF, session security
 - Incident reports, evidence upload, status tracking
 - Admin review, audit log
-- Stitch-derived custom UI
+- Custom UI (tokens → base → components CSS)
 
 ### Planned (post-MVP)
 - Analysis history page (`/analyses`) — DB and repo ready; route not wired
@@ -478,6 +480,7 @@ For new contributors:
 | [Docs/TASKS.md](Docs/TASKS.md) | Milestone task board with implementation status |
 | [Docs/DECISION.md](Docs/DECISION.md) | Architecture decision records (ADR-001 to ADR-009) |
 | [Docs/MEMORY.md](Docs/MEMORY.md) | Durable context for AI coding agents |
+| [Docs/DEPLOYMENT_INFINITYFREE.md](Docs/DEPLOYMENT_INFINITYFREE.md) | InfinityFree shared hosting deployment guide (scamshield.site.je) |
 
 ---
 
