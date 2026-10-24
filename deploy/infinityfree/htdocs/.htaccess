@@ -1,69 +1,71 @@
-# ScamShield — htdocs/.htaccess
-# InfinityFree deployment: htdocs/ IS the web root for scamshield.site.je
+# ==============================================================================
+# ScamShield — Root .htaccess (InfinityFree Production Deployment)
+# Target: https://scamshield.site.je
 #
-# Requirements:
-#  - mod_rewrite must be enabled (it is on InfinityFree)
-#  - AllowOverride All must be set (it is on InfinityFree for htdocs/)
-#
-# All PHP source, config, storage, and database dirs are subdirectories of
-# htdocs/ and are protected by their own .htaccess files (Require all denied).
-# This file handles URL routing and top-level security.
+# InfinityFree compatibility rules:
+#  - Options -Indexes is allowed; Options All / MultiViews are restricted.
+#  - No nested <If> directives inside <FilesMatch> (causes Apache syntax 500).
+#  - No php_flag / php_value directives (PHP runs via FastCGI/PHP-FPM).
+#  - Security headers are emitted by PHP (Bootstrap.php) to prevent mod_headers failure.
+#  - Access to app/, config/, database/, storage/ blocked via mod_rewrite + subfolder rules.
+# ==============================================================================
 
+DirectoryIndex index.php
 Options -Indexes
 
-# ── Block dotfiles (prevents .env, .git, .htaccess source exposure) ───────
-<FilesMatch "^\.">
-    Require all denied
-</FilesMatch>
-
-# ── Block PHP source in protected subdirectories ───────────────────────────
-# Belt-and-suspenders: even if subdir .htaccess fails, block direct PHP access
-# to app/, config/, database/, storage/ from here.
-<FilesMatch "\.(php|phtml|php3|php4|php5|phps|phar)$">
-    <If "%{REQUEST_URI} =~ m|^/(app|config|database|storage)/|">
-        Require all denied
-    </If>
-</FilesMatch>
-
-# ── Force HTTPS ────────────────────────────────────────────────────────────
-# InfinityFree provides free SSL. Redirect plain HTTP to HTTPS.
 <IfModule mod_rewrite.c>
     RewriteEngine On
+    RewriteBase /
 
-    # Redirect HTTP to HTTPS (InfinityFree terminates SSL at the load balancer;
-    # HTTPS is detectable via X-Forwarded-Proto or HTTPS server variable).
-    RewriteCond %{HTTPS} off
+    # ── 1. Force HTTPS ────────────────────────────────────────────────────────
+    # InfinityFree load balancer terminates SSL; checks X-Forwarded-Proto,
+    # HTTPS server var, and Cloudflare CF-Visitor headers to avoid redirect loops.
     RewriteCond %{HTTP:X-Forwarded-Proto} !https
-    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+    RewriteCond %{HTTPS} off
+    RewriteCond %{HTTP:CF-Visitor} !{"scheme":"https"}
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
-    # Serve existing static files and directories directly (assets/).
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
+    # ── 2. Block direct HTTP access to protected directories ─────────────────
+    # Blocks requests to /app/, /config/, /database/, and /storage/ immediately.
+    RewriteRule ^(app|config|database|storage)(/|$) - [F,L]
 
-    # Route all other requests through the front controller.
-    RewriteRule ^ index.php [QSA,L]
+    # ── 3. Block dotfiles and hidden folders ─────────────────────────────────
+    # Prevents direct access to .env, .git, .htaccess, etc.
+    RewriteRule (^\.|/\.) - [F,L]
+
+    # ── 4. Block direct access to sensitive file extensions ───────────────────
+    RewriteRule \.(sql|log|env|json|lock|md|gitignore|example)$ - [F,L]
+
+    # ── 5. Serve existing static assets directly (CSS, JS, images, favicon) ───
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Intercept missing favicon and robots to prevent waking up PHP / throwing 500
+    RewriteRule ^favicon\.ico$ - [R=204,L]
+    RewriteRule ^robots\.txt$ - [R=404,L]
+
+    # ── 6. Front Controller dispatch for all application routes ───────────────
+    RewriteRule ^(.*)$ index.php [QSA,L]
 </IfModule>
 
-# ── PHP production settings (where mod_php or php_admin is available) ─────
-<IfModule mod_php.c>
-    php_flag  display_errors       Off
-    php_flag  display_startup_errors Off
-    php_value error_reporting      E_ALL
-    php_flag  log_errors           On
-</IfModule>
+# ── Fallback file protections (in case mod_rewrite is bypassed) ───────────────
+<FilesMatch "^\.">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</FilesMatch>
 
-# ── Security headers ──────────────────────────────────────────────────────
-<IfModule mod_headers.c>
-    Header always set X-Content-Type-Options "nosniff"
-    Header always set X-Frame-Options "SAMEORIGIN"
-    Header always set Referrer-Policy "strict-origin-when-cross-origin"
-    Header always set X-XSS-Protection "1; mode=block"
-    # Remove server signature from responses
-    Header unset Server
-    Header unset X-Powered-By
-</IfModule>
-
-# ── Prevent access to sensitive file extensions ───────────────────────────
 <FilesMatch "\.(sql|log|env|json|lock|md|gitignore|example)$">
-    Require all denied
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
 </FilesMatch>

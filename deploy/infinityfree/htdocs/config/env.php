@@ -19,16 +19,20 @@
 declare(strict_types=1);
 
 (static function (): void {
-    // __DIR__ = htdocs/config/ → .env lives in the same directory
+    // Check config/.env first (standard location), then fall back to root htdocs/.env
     $envFile = __DIR__ . DIRECTORY_SEPARATOR . '.env';
+    if (!file_exists($envFile)) {
+        $rootEnv = dirname(__DIR__) . DIRECTORY_SEPARATOR . '.env';
+        if (file_exists($rootEnv)) {
+            $envFile = $rootEnv;
+        }
+    }
 
     if (!file_exists($envFile)) {
-        // On InfinityFree production, .env must be uploaded manually before first request.
-        throw new RuntimeException(
-            'Environment configuration file not found. ' .
-            'Upload config/.env with production values via FTP. ' .
-            'See deploy/infinityfree/htdocs/config/.env.deploy.example for the template.'
-        );
+        error_log('[ScamShield Boot] Notice: .env file not found in config/ or htdocs/. Using production defaults.');
+        $_ENV['APP_ENV']   = $_ENV['APP_ENV']   ?? 'production';
+        $_ENV['APP_DEBUG'] = $_ENV['APP_DEBUG'] ?? 'false';
+        return;
     }
 
     $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);

@@ -55,6 +55,9 @@ coverage/
 .coverage/
 build/
 dist/
+project-report/
+deploy/infinityfree/
+Docs/DEPLOYMENT_INFINITYFREE.md
 
 # ============================================================
 # DO NOT add .env.example — it must remain trackable

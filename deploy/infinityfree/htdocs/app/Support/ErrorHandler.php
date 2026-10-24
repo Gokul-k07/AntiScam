@@ -57,6 +57,9 @@ class ErrorHandler
             'trace'   => $e->getTraceAsString(),
         ]);
 
+        // Always log to standard PHP error log as fallback if file logging is unconfigured
+        error_log('[ScamShield] ' . get_class($e) . ': ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
+
         if (!headers_sent()) {
             http_response_code($statusCode);
             header('Content-Type: text/html; charset=utf-8');

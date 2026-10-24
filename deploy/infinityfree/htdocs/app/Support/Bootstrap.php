@@ -33,34 +33,43 @@ class Bootstrap
      */
     public static function init(): array
     {
-        // ONE level up from app/Support/ = htdocs/ (the deployment root).
-        $basePath = dirname(__DIR__);
+        // TWO levels up from app/Support/ = htdocs/ (the deployment root).
+        $basePath = dirname(__DIR__, 2);
 
         // 1. Manually require the Autoloader (it cannot load itself).
         require_once __DIR__ . '/Autoloader.php';
         Autoloader::register();
 
-        // 2. Load config/.env into $_ENV.
-        //    env.php now loads .env from __DIR__ (config/) rather than project root.
+        // 2. Register centralized error / exception handlers early.
+        require_once __DIR__ . '/ErrorHandler.php';
+        ErrorHandler::register();
+
+        // 3. Load config/.env into $_ENV.
         require_once $basePath . '/config/env.php';
 
-        // 3. Load app config.
+        // 4. Load app config.
         $config = require $basePath . '/config/app.php';
 
-        // 4. Override display_errors from config — production must be Off.
+        // 5. Override display_errors from config — production must be Off.
         ini_set('display_errors', $config['debug'] ? '1' : '0');
         ini_set('display_startup_errors', $config['debug'] ? '1' : '0');
 
-        // 5. Point PHP's error log to our log directory (inside htdocs/storage/logs/).
+        // 6. Point PHP's error log to our log directory (inside htdocs/storage/logs/).
         $phpErrorLog = rtrim((string)$config['log_path'], '/\\')
             . DIRECTORY_SEPARATOR . 'php_errors.log';
         ini_set('error_log', $phpErrorLog);
 
-        // 6. Register centralized error / exception handlers.
-        ErrorHandler::register();
-
         // 7. Start secure session.
         Session::start($config);
+
+        // 8. Set standard security headers at the PHP layer.
+        // Ensures protection without relying on Apache mod_headers which can fail on shared hosting.
+        if (!headers_sent()) {
+            header('X-Content-Type-Options: nosniff');
+            header('X-Frame-Options: SAMEORIGIN');
+            header('Referrer-Policy: strict-origin-when-cross-origin');
+            header('X-XSS-Protection: 1; mode=block');
+        }
 
         return $config;
     }

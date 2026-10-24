@@ -2,4 +2,10 @@
 # Deny direct HTTP access to all application source files.
 # PHP requires/includes these files internally — they are never served directly.
 
-Require all denied
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Order deny,allow
+    Deny from all
+</IfModule>

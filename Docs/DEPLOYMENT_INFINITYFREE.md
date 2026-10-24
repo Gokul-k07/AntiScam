@@ -230,11 +230,12 @@ InfinityFree provides free SSL certificates via Let's Encrypt.
 1. In the InfinityFree control panel, go to **SSL Certificates**.
 2. Select your domain (`scamshield.site.je`) and install a free SSL certificate.
 3. Wait up to 24 hours for DNS propagation if you recently pointed the domain.
-4. The `.htaccess` in `htdocs/` already redirects HTTP → HTTPS:
+4. The `.htaccess` in `htdocs/` redirects HTTP → HTTPS (including proxy & Cloudflare headers):
    ```apache
-   RewriteCond %{HTTPS} off
    RewriteCond %{HTTP:X-Forwarded-Proto} !https
-   RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+   RewriteCond %{HTTPS} off
+   RewriteCond %{HTTP:CF-Visitor} !{"scheme":"https"}
+   RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
    ```
 
 ### Verify HTTPS is working
@@ -340,6 +341,20 @@ InfinityFree does not provide automatic backups on the free plan.
 ---
 
 ## 11. Troubleshooting
+
+### "Something Went Wrong!" or 500 Error (.htaccess error)
+
+- **Cause**: Apache encountered an unsupported directive or syntax error in `.htaccess`.
+  - Common triggers on InfinityFree:
+    1. Nesting an `<If>` tag inside `<FilesMatch>` (invalid Apache syntax).
+    2. Using `php_flag` or `php_value` (InfinityFree runs PHP via FastCGI/PHP-FPM, not mod_php).
+    3. Using `Header unset Server` or unsupported `mod_headers` rules.
+    4. Using restricted `Options` flags like `Options All` or `Options -MultiViews`.
+- **Fix**: Use the updated `deploy/infinityfree/htdocs/.htaccess` which enforces:
+  - Clean `mod_rewrite` rules to block protected directories (`/app/`, `/config/`, `/database/`, `/storage/`).
+  - Safe `<FilesMatch>` rules for sensitive files with dual Apache 2.2/2.4 compatibility wrappers.
+  - Security headers handled safely at the PHP layer in `Bootstrap.php` rather than `.htaccess`.
+- **Verification**: If testing `.htaccess` isolation, temporarily rename `.htaccess` to `.htaccess.bak` via FTP/File Manager. If the default InfinityFree page or a raw index appears, the `.htaccess` was triggering the issue.
 
 ### 403 Forbidden on all pages
 
